@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26430.16
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tiver.Fowl.Drivers", "Tiver.Fowl.Drivers\Tiver.Fowl.Drivers.csproj", "{6F6D255F-0B9D-459A-9668-9B6931BEDD0E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tiver.Fowl.Drivers.Tests", "Tiver.Fowl.Drivers.Tests\Tiver.Fowl.Drivers.Tests.csproj", "{D8CB72DC-6E92-41D7-8E5B-5FC1B02E21C5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6F6D255F-0B9D-459A-9668-9B6931BEDD0E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F6D255F-0B9D-459A-9668-9B6931BEDD0E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F6D255F-0B9D-459A-9668-9B6931BEDD0E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F6D255F-0B9D-459A-9668-9B6931BEDD0E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D8CB72DC-6E92-41D7-8E5B-5FC1B02E21C5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D8CB72DC-6E92-41D7-8E5B-5FC1B02E21C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D8CB72DC-6E92-41D7-8E5B-5FC1B02E21C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D8CB72DC-6E92-41D7-8E5B-5FC1B02E21C5}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
