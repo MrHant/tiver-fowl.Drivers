@@ -43,7 +43,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Configuration\DriversConfiguration.cs" />
+    <Compile Include="Configuration\DriverCollection.cs" />
+    <Compile Include="Configuration\DriverElement.cs" />
     <Compile Include="Configuration\DriversConfigurationSection.cs" />
     <Compile Include="Configuration\IDriversConfiguration.cs" />
     <Compile Include="Downloaders\ChromeDriverDownloader.cs" />

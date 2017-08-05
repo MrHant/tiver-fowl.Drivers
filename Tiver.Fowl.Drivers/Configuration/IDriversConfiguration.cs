@@ -7,5 +7,10 @@
         /// If null - defaults to assembly location
         /// </summary>
         string DownloadLocation { get; }
+
+        /// <summary>
+        /// Configured driver instances
+        /// </summary>
+        DriverCollection Instances { get; }
     }
 }

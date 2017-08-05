@@ -19,18 +19,18 @@ namespace Tiver.Fowl.Drivers.Configuration
             }
         }
 
+        [ConfigurationProperty("", IsRequired = true, IsDefaultCollection = true)]
+        public DriverCollection Instances
+        {
+            get => (DriverCollection)this[""];
+            set => this[""] = value;
+        }
+
         [ConfigurationProperty("downloadLocation", IsRequired = false)]
         private string DownloadLocationElement
         {
-            get
-            {
-                return (string)this["downloadLocation"];
-            }
-
-            set
-            {
-                this["downloadLocation"] = value;
-            }
+            get => (string)this["downloadLocation"];
+            set => this["downloadLocation"] = value;
         }
     }
 }
