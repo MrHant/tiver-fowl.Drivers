@@ -7,6 +7,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tiver.Fowl.Drivers", "Tiver
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tiver.Fowl.Drivers.Tests", "Tiver.Fowl.Drivers.Tests\Tiver.Fowl.Drivers.Tests.csproj", "{D8CB72DC-6E92-41D7-8E5B-5FC1B02E21C5}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "package", "package", "{CEDA36D1-9F72-4B83-A01F-A0F647839867}"
+	ProjectSection(SolutionItems) = preProject
+		package\Package.nuspec = package\Package.nuspec
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
