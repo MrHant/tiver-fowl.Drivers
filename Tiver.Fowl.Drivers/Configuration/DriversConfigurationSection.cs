@@ -17,6 +17,7 @@ namespace Tiver.Fowl.Drivers.Configuration
 
                 return DownloadLocationElement;
             }
+            set => DownloadLocationElement = value;
         }
 
         [ConfigurationProperty("", IsRequired = true, IsDefaultCollection = true)]
