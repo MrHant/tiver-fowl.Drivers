@@ -7,6 +7,9 @@ Download WebDriver drivers' binaries from official sources
 * Add downloaders configuration to ```app.config``` file. Sample configuration can be found below
 * Add calls to execute downloaders. Sample usage can be found below
 
+## Downloaders
+* ChromeDriverDownloader - downloads binaries from http://chromedriver.storage.googleapis.com/
+
 
 ## Sample usage
 ### Download configured "chrome" driver
