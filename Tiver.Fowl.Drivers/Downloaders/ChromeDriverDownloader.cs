@@ -6,22 +6,15 @@ using System.IO.Compression;
 using System.Linq;
 using System.Net.Http;
 using System.Xml;
+using Tiver.Fowl.Drivers.Binaries;
 using Tiver.Fowl.Drivers.Configuration;
 
 namespace Tiver.Fowl.Drivers.Downloaders
 {
     public class ChromeDriverDownloader : IDriverDownloader
     {
+        public IDriverBinary Binary => new ChromeDriverBinary();
         public Uri LinkForDownloadsPage => new Uri("http://chromedriver.storage.googleapis.com/");
-
-        public string DriverBinaryFilename => "chromedriver.exe";
-
-        readonly IDriversConfiguration _config = (DriversConfigurationSection)ConfigurationManager.GetSection("driversConfigurationGroup/driversConfiguration");
-
-        public bool CheckBinaryExists()
-        {
-            return File.Exists(Path.Combine(_config.DownloadLocation, DriverBinaryFilename));
-        }
 
         public Uri GetLinkForVersion(string versionNumber)
         {
@@ -50,7 +43,7 @@ namespace Tiver.Fowl.Drivers.Downloaders
                 : new Uri(LinkForDownloadsPage, query);
         }
 
-        public bool DownloadBinary(Uri downloadLink)
+        public bool DownloadBinary(Uri downloadLink, string versionNumber)
         {
             try
             {
@@ -64,6 +57,8 @@ namespace Tiver.Fowl.Drivers.Downloaders
 
                 ZipFile.ExtractToDirectory(tempFile, _config.DownloadLocation);
                 File.Delete(tempFile);
+                var versionFilePath = Path.Combine(_config.DownloadLocation, $"{Binary.DriverBinaryFilename}.version");
+                File.WriteAllText(versionFilePath, versionNumber);
                 return true;
             }
             catch (Exception)
@@ -71,5 +66,13 @@ namespace Tiver.Fowl.Drivers.Downloaders
                 return false;
             }
         }
+
+        public bool DownloadBinary(string versionNumber)
+        {
+            var uri = GetLinkForVersion(versionNumber);
+            return DownloadBinary(uri, versionNumber);
+        }
+
+        readonly IDriversConfiguration _config = (DriversConfigurationSection)ConfigurationManager.GetSection("driversConfigurationGroup/driversConfiguration");
     }
 }

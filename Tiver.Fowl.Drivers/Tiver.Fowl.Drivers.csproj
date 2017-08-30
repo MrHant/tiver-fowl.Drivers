@@ -44,6 +44,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Binaries\ChromeDriverBinary.cs" />
+    <Compile Include="Binaries\IDriverBinary.cs" />
     <Compile Include="Configuration\DriverCollection.cs" />
     <Compile Include="Configuration\DriverElement.cs" />
     <Compile Include="Configuration\DriversConfigurationSection.cs" />
