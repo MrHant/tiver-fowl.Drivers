@@ -9,7 +9,7 @@ Download WebDriver drivers' binaries from official sources
 
 ## Downloaders
 * ChromeDriverDownloader - downloads binaries from http://chromedriver.storage.googleapis.com/
-
+  * ```LATEST_RELEASE``` version can be used to download latest driver version
 
 ## Sample usage
 ### Download configured "chrome" driver
@@ -18,7 +18,7 @@ Download WebDriver drivers' binaries from official sources
 var config = (IDriversConfiguration) ConfigurationManager.GetSection("driversConfigurationGroup/driversConfiguration");
 var driverConfig = config.Instances.Cast<DriverElement>().Single(d => d.Name.Equals("chrome"));
 var downloader = (IDriverDownloader)Activator.CreateInstance(
-    "Tiver.Fowl.Drivers", 
+    "Tiver.Fowl.Drivers",
     $"Tiver.Fowl.Drivers.Downloaders.{driverConfig.DownloaderType}")
         .Unwrap();
 

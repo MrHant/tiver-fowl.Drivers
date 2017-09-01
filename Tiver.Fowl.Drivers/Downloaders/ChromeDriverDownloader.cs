@@ -18,6 +18,11 @@ namespace Tiver.Fowl.Drivers.Downloaders
 
         public bool DownloadBinary(string versionNumber)
         {
+            if (versionNumber.Equals("LATEST_RELEASE"))
+            {
+                versionNumber = GetLatestVersion();
+            }
+
             var uri = GetLinkForVersion(versionNumber);
             return DownloadBinary(uri, versionNumber);
         }
@@ -70,6 +75,19 @@ namespace Tiver.Fowl.Drivers.Downloaders
             catch (Exception)
             {
                 return false;
+            }
+        }
+
+        private string GetLatestVersion()
+        {
+            var linkForLatestReleaseFile = new Uri(LinkForDownloadsPage, "LATEST_RELEASE");
+
+            using (var client = new HttpClient())
+            using (var response = client.GetAsync(linkForLatestReleaseFile).Result)
+            using (var content = response.Content)
+            {
+                var rawResult = content.ReadAsStringAsync().Result;
+                return rawResult.Trim();
             }
         }
 
