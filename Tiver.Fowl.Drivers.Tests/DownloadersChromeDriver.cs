@@ -41,9 +41,7 @@ namespace Tiver.Fowl.Drivers.Tests
         {
             var downloader = new ChromeDriverDownloader();
             const string versionNumber = "2.9";
-            var uri = downloader.GetLinkForVersion(versionNumber);
-            Assert.IsNotNull(uri);
-            var result = downloader.DownloadBinary(uri, versionNumber);
+            var result = downloader.DownloadBinary(versionNumber);
             Assert.IsTrue(result);
             var exists = File.Exists(DriverFilepath);
             Assert.IsTrue(exists);

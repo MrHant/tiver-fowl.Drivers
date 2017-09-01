@@ -16,7 +16,13 @@ namespace Tiver.Fowl.Drivers.Downloaders
         public IDriverBinary Binary => new ChromeDriverBinary();
         public Uri LinkForDownloadsPage => new Uri("http://chromedriver.storage.googleapis.com/");
 
-        public Uri GetLinkForVersion(string versionNumber)
+        public bool DownloadBinary(string versionNumber)
+        {
+            var uri = GetLinkForVersion(versionNumber);
+            return DownloadBinary(uri, versionNumber);
+        }
+
+        private Uri GetLinkForVersion(string versionNumber)
         {
             var keys = new List<string>();
 
@@ -43,7 +49,7 @@ namespace Tiver.Fowl.Drivers.Downloaders
                 : new Uri(LinkForDownloadsPage, query);
         }
 
-        public bool DownloadBinary(Uri downloadLink, string versionNumber)
+        private bool DownloadBinary(Uri downloadLink, string versionNumber)
         {
             try
             {
@@ -65,12 +71,6 @@ namespace Tiver.Fowl.Drivers.Downloaders
             {
                 return false;
             }
-        }
-
-        public bool DownloadBinary(string versionNumber)
-        {
-            var uri = GetLinkForVersion(versionNumber);
-            return DownloadBinary(uri, versionNumber);
         }
 
         readonly IDriversConfiguration _config = (DriversConfigurationSection)ConfigurationManager.GetSection("driversConfigurationGroup/driversConfiguration");
