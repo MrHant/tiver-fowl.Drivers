@@ -1,4 +1,3 @@
-version: 0.1.{build}-{branch}
 pull_requests:
   do_not_increment_build_number: true
 skip_tags: true
@@ -9,8 +8,3 @@ assembly_info:
 
 build_script:
   - ps: ./build.ps1
-
-after_build:
-  - cmd: ECHO nuget pack <Project>\<NuSpec>.nuspec -version "%GitVersion_NuGetVersion%" -prop "target=%CONFIGURATION%"
-  - cmd: nuget pack <Project>\<NuSpec>.nuspec -version "%GitVersion_NuGetVersion%" -prop "target=%CONFIGURATION%"
-  - cmd: appveyor PushArtifact "<NuSpec>.%GitVersion_NuGetVersion%.nupkg"
