@@ -1,9 +1,10 @@
+const string project = "Tiver.Fowl.Drivers";
 var target = Argument("target", "Default");
 var configuration = Argument("configuration", "Release");
-var solutionFilename = Argument("solutionFilename", "Tiver.Fowl.Drivers.sln");
-var testsProject = Argument("testsProject", "Tiver.Fowl.Drivers.Tests");
-var testsFile = Argument("testsFile", "Tiver.Fowl.Drivers.Tests.dll");
-var projects = Argument("projects", "Tiver.Fowl.Drivers;Tiver.Fowl.Drivers.Tests");
+var solutionFilename = Argument("solutionFilename", project + ".sln");
+var testsProject = Argument("testsProject", project + ".Tests");
+var testsFile = Argument("testsFile", project + ".Tests.dll");
+var projects = Argument("projects", project + ";" + project + ".Tests");
 
 var projectDirectories = projects.Split(';');
 
@@ -13,6 +14,7 @@ var msBuildPath = (vsLatest==null)
                             : vsLatest.CombineWithFilePath("./MSBuild/15.0/Bin/MSBuild.exe");
 
 GitVersion versionInfo;
+string version;
 
 Setup(_ =>
 {
@@ -67,7 +69,7 @@ Task("RunUnitTests")
     .IsDependentOn("Build")
     .Does(() =>
 {
-    NUnit("./Tiver.Fowl.Drivers.Tests/bin/" + configuration + "/" + testsFile, new NUnitSettings {
+    NUnit("./" + testsProject + "/bin/" + configuration + "/" + testsFile, new NUnitSettings {
         ToolPath = "./tools/NUnit.ConsoleRunner/tools/nunit3-console.exe"
     });
 });
@@ -83,21 +85,13 @@ Task("Version")
     versionInfo = GitVersion(new GitVersionSettings{ 
         OutputType = GitVersionOutput.Json,
     });
-    Information("GitVersion_NuGetVersion - " + versionInfo.NuGetVersion + " - " + EnvironmentVariable("GitVersion_NuGetVersion"));
-    Information("GitVersion_LegacySemVerPadded - " + versionInfo.LegacySemVerPadded + " - " + EnvironmentVariable("GitVersion_LegacySemVerPadded"));
+    version = versionInfo.LegacySemVerPadded;
 });
    
 Task("CreateNuGetPackage")
     .IsDependentOn("RunUnitTests")
     .Does(() =>
 {
-    string version;
-    if (AppVeyor.IsRunningOnAppVeyor) {
-        version = EnvironmentVariable("GitVersion_LegacySemVerPadded");
-    } else {
-        version = versionInfo.LegacySemVerPadded;
-    }
-
     Information("Packing version {0}", version);
     var nuGetPackSettings = new NuGetPackSettings {
         Version = version,
@@ -107,7 +101,19 @@ Task("CreateNuGetPackage")
     NuGetPack("./package/Package.nuspec", nuGetPackSettings);
 });
 
+Task("PushNuGetPackage")
+    .IsDependentOn("CreateNuGetPackage")
+    .Does(() =>
+{
+    var package = "./package/" + project + "."  + version +".nupkg";
+
+    NuGetPush(package, new NuGetPushSettings {
+        Source = "https://nuget.org/",
+        ApiKey = Environment.GetEnvironmentVariable("NuGet_API_KEY")
+    });
+});
+
 Task("Default")
-    .IsDependentOn("CreateNuGetPackage");
+    .IsDependentOn("PushNuGetPackage");
 
 RunTarget(target);
