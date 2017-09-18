@@ -2,13 +2,13 @@
 using System.Configuration;
 using System.IO;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using Tiver.Fowl.Drivers.Configuration;
 using Tiver.Fowl.Drivers.Downloaders;
 
 namespace Tiver.Fowl.Drivers.Tests
 {
-    [TestClass]
+    [TestFixture]
     public class DownloadersChromeDriver
     {
         private static IDriversConfiguration Config =>
@@ -30,13 +30,13 @@ namespace Tiver.Fowl.Drivers.Tests
             }
         }
 
-        [TestInitialize]
+        [SetUp]
         public void SetUp()
         {
             DeleteDriverAndVersionFilesIfExist();
         }
 
-        [TestMethod]
+        [Test]
         public void Download_v29()
         {
             var downloader = new ChromeDriverDownloader();
@@ -50,7 +50,7 @@ namespace Tiver.Fowl.Drivers.Tests
             Assert.AreEqual(versionNumber, downloader.Binary.GetExistingBinaryVersion());
         }
 
-        [TestMethod]
+        [Test]
         public void Download_From_Configuration()
         {
             var driverConfig = Config.Instances.Cast<DriverElement>().Single(d => d.Name.Equals("chrome"));
@@ -68,7 +68,7 @@ namespace Tiver.Fowl.Drivers.Tests
             Assert.AreEqual(driverConfig.Version, downloader.Binary.GetExistingBinaryVersion());
         }
 
-        [TestMethod]
+        [Test]
         public void Download_Latest_Release()
         {
             var downloader = new ChromeDriverDownloader();
