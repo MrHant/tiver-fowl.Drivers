@@ -85,13 +85,7 @@ Task("Version")
     versionInfo = GitVersion(new GitVersionSettings{ 
         OutputType = GitVersionOutput.Json,
     });
-    Information("GitVersion_NuGetVersion - " + versionInfo.NuGetVersion + " - " + Environment.GetEnvironmentVariable("GitVersion_NuGetVersion"));
-    Information("GitVersion_LegacySemVerPadded - " + versionInfo.LegacySemVerPadded + " - " + Environment.GetEnvironmentVariable("GitVersion_LegacySemVerPadded"));
-    if (AppVeyor.IsRunningOnAppVeyor) {
-        version = Environment.GetEnvironmentVariable("GitVersion_LegacySemVerPadded");
-    } else {
-        version = versionInfo.LegacySemVerPadded;
-    }
+    version = versionInfo.LegacySemVerPadded;
 });
    
 Task("CreateNuGetPackage")
