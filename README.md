@@ -1,4 +1,5 @@
 # tiver-fowl.Drivers [![NuGet](https://img.shields.io/nuget/v/Tiver.Fowl.Drivers.svg)](https://www.nuget.org/packages/Tiver.Fowl.Drivers/) [![Codacy Badge](https://img.shields.io/codacy/grade/2ecdd0d0d6af44e480bb899af695e442/master.svg)](https://www.codacy.com/app/mr.hant/tiver-fowl.Drivers?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=MrHant/tiver-fowl.Drivers&amp;utm_campaign=Badge_Grade) [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/MrHant/tiver-fowl/master/LICENSE)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FMrHant%2Ftiver-fowl.Drivers.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2FMrHant%2Ftiver-fowl.Drivers?ref=badge_shield)
 
 
 Download WebDriver drivers' binaries from official sources
@@ -52,3 +53,7 @@ var result = downloader.DownloadBinary(driverConfig.Version);
   </driversConfigurationGroup>
 </configuration>
 ```
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FMrHant%2Ftiver-fowl.Drivers.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2FMrHant%2Ftiver-fowl.Drivers?ref=badge_large)
