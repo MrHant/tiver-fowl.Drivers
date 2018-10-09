@@ -4,5 +4,13 @@ namespace Tiver.Fowl.Drivers.Downloaders
     {
         public bool Successful;
         public string ErrorMessage;
+        public DownloaderAction PerformedAction;
+    }
+
+    public enum DownloaderAction
+    {
+        Unknown,
+        NewFileDownloaded,
+        NoDownloadedNeeded,        
     }
 }

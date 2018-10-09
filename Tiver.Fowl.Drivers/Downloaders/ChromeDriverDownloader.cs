@@ -23,6 +23,18 @@ namespace Tiver.Fowl.Drivers.Downloaders
                 versionNumber = GetLatestVersion();
             }
 
+            if (Binary.CheckBinaryExists())
+            {
+                if (Binary.GetExistingBinaryVersion().Equals(versionNumber))
+                {
+                    return new DownloadResult
+                    {
+                        Successful = true,
+                        PerformedAction = DownloaderAction.NoDownloadedNeeded
+                    };
+                }
+            }
+            
             var uri = GetLinkForVersion(versionNumber);
             return DownloadBinary(uri, versionNumber);
         }
@@ -56,7 +68,6 @@ namespace Tiver.Fowl.Drivers.Downloaders
 
         private DownloadResult DownloadBinary(Uri downloadLink, string versionNumber)
         {
-            var result = new DownloadResult();
             try
             {
                 string tempFile;
@@ -71,15 +82,19 @@ namespace Tiver.Fowl.Drivers.Downloaders
                 File.Delete(tempFile);
                 var versionFilePath = Path.Combine(Config.DownloadLocation, $"{Binary.DriverBinaryFilename}.version");
                 File.WriteAllText(versionFilePath, versionNumber);
-                result.Successful = true;
+                return new DownloadResult
+                {
+                    Successful = true, 
+                    PerformedAction = DownloaderAction.NewFileDownloaded
+                };
             }
             catch (Exception ex)
             {
-                result.Successful = false;
-                result.ErrorMessage = ex.Message;
+                return new DownloadResult
+                {
+                    ErrorMessage = ex.Message
+                };
             }
-
-            return result;
         }
 
         private string GetLatestVersion()
