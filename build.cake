@@ -2,8 +2,6 @@ const string project = "Tiver.Fowl.Drivers";
 var target = Argument("target", "Default");
 var configuration = Argument("configuration", "Release");
 var solutionFilename = Argument("solutionFilename", project + ".sln");
-var testsProject = Argument("testsProject", project + ".Tests");
-var testsFile = Argument("testsFile", project + ".Tests.dll");
 var projects = Argument("projects", project + ";" + project + ".Tests");
 
 var projectDirectories = projects.Split(';');
@@ -69,7 +67,11 @@ Task("RunUnitTests")
     .IsDependentOn("Build")
     .Does(() =>
 {
-    NUnit("./" + testsProject + "/bin/" + configuration + "/" + testsFile, new NUnitSettings {
+    NUnit("./" + project + ".Tests" + "/bin/" + configuration + "/" + project + ".Tests.dll", new NUnitSettings {
+        ToolPath = "./tools/NUnit.ConsoleRunner/tools/nunit3-console.exe"
+    });
+
+    NUnit("./" + project + ".TestsWithoutConfigFile" + "/bin/" + configuration + "/" + project + ".TestsWithoutConfigFile.dll", new NUnitSettings {
         ToolPath = "./tools/NUnit.ConsoleRunner/tools/nunit3-console.exe"
     });
 });
