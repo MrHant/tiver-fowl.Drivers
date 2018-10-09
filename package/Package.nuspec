@@ -10,10 +10,10 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Configurable WebDriver downloaders.</description>
     <dependencies />
+    <frameworkAssemblies>
+      <frameworkAssembly assemblyName="System.Configuration" />
+    </frameworkAssemblies>
   </metadata>
-  <frameworkAssemblies>
-    <frameworkAssembly assemblyName="System.Configuration" />
-  </frameworkAssemblies>
   <files>
     <file src="..\Tiver.Fowl.Drivers\bin\Release\Tiver.*" target="lib\net45" />
   </files>
