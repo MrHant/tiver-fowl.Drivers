@@ -16,7 +16,7 @@ namespace Tiver.Fowl.Drivers.Downloaders
         public IDriverBinary Binary => new ChromeDriverBinary();
         public Uri LinkForDownloadsPage => new Uri("http://chromedriver.storage.googleapis.com/");
 
-        public bool DownloadBinary(string versionNumber)
+        public DownloadResult DownloadBinary(string versionNumber)
         {
             if (versionNumber.Equals("LATEST_RELEASE"))
             {
@@ -24,7 +24,40 @@ namespace Tiver.Fowl.Drivers.Downloaders
             }
 
             var uri = GetLinkForVersion(versionNumber);
-            return DownloadBinary(uri, versionNumber);
+            if (uri == null)
+            {
+                return new DownloadResult
+                {
+                    ErrorMessage = "Cannot find specified version to download."
+                };
+            }
+            
+            if (Binary.CheckBinaryExists())
+            {
+                if (Binary.GetExistingBinaryVersion().Equals(versionNumber))
+                {
+                    return new DownloadResult
+                    {
+                        Successful = true,
+                        PerformedAction = DownloaderAction.NoDownloadNeeded
+                    };
+                }
+                else
+                {
+                    Binary.RemoveBinaryFiles();
+                    var result = DownloadBinary(uri, versionNumber);
+                    if (result.Successful)
+                    {
+                        result.PerformedAction = DownloaderAction.BinaryUpdated;
+                    } 
+                    
+                    return result;
+                } 
+            }
+            else
+            {
+                return DownloadBinary(uri, versionNumber);
+            }
         }
 
         private Uri GetLinkForVersion(string versionNumber)
@@ -54,7 +87,7 @@ namespace Tiver.Fowl.Drivers.Downloaders
                 : new Uri(LinkForDownloadsPage, query);
         }
 
-        private bool DownloadBinary(Uri downloadLink, string versionNumber)
+        private DownloadResult DownloadBinary(Uri downloadLink, string versionNumber)
         {
             try
             {
@@ -66,15 +99,22 @@ namespace Tiver.Fowl.Drivers.Downloaders
                     File.WriteAllBytes(tempFile, bytes);
                 }
 
-                ZipFile.ExtractToDirectory(tempFile, _config.DownloadLocation);
+                ZipFile.ExtractToDirectory(tempFile, Config.DownloadLocation);
                 File.Delete(tempFile);
-                var versionFilePath = Path.Combine(_config.DownloadLocation, $"{Binary.DriverBinaryFilename}.version");
+                var versionFilePath = Path.Combine(Config.DownloadLocation, $"{Binary.DriverBinaryFilename}.version");
                 File.WriteAllText(versionFilePath, versionNumber);
-                return true;
+                return new DownloadResult
+                {
+                    Successful = true, 
+                    PerformedAction = DownloaderAction.BinaryDownloaded
+                };
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return false;
+                return new DownloadResult
+                {
+                    ErrorMessage = ex.Message
+                };
             }
         }
 
@@ -91,6 +131,6 @@ namespace Tiver.Fowl.Drivers.Downloaders
             }
         }
 
-        readonly IDriversConfiguration _config = (DriversConfigurationSection)ConfigurationManager.GetSection("driversConfigurationGroup/driversConfiguration");
+        private static readonly IDriversConfiguration Config = ConfigurationReader.ReadFromFileOrDefault();
     }
 }

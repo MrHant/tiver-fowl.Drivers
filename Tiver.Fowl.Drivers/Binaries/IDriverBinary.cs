@@ -15,5 +15,10 @@
         /// </summary>
         /// <returns>Version number or null if binary is not existing</returns>
         string GetExistingBinaryVersion();
+
+        /// <summary>
+        /// Remove binary and .version files
+        /// </summary>
+        void RemoveBinaryFiles();
     }
 }
