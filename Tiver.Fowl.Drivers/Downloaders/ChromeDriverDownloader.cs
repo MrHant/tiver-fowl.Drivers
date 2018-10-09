@@ -23,6 +23,15 @@ namespace Tiver.Fowl.Drivers.Downloaders
                 versionNumber = GetLatestVersion();
             }
 
+            var uri = GetLinkForVersion(versionNumber);
+            if (uri == null)
+            {
+                return new DownloadResult
+                {
+                    ErrorMessage = "Cannot find specified version to download."
+                };
+            }
+            
             if (Binary.CheckBinaryExists())
             {
                 if (Binary.GetExistingBinaryVersion().Equals(versionNumber))
@@ -33,18 +42,22 @@ namespace Tiver.Fowl.Drivers.Downloaders
                         PerformedAction = DownloaderAction.NoDownloadedNeeded
                     };
                 }
-            }
-            
-            var uri = GetLinkForVersion(versionNumber);
-            if (uri == null)
-            {
-                return new DownloadResult
+                else
                 {
-                    ErrorMessage = "Cannot find specified version to download."
-                };
+                    Binary.RemoveBinaryFiles();
+                    var result = DownloadBinary(uri, versionNumber);
+                    if (result.Successful)
+                    {
+                        result.PerformedAction = DownloaderAction.BinaryUpdated;
+                    } 
+                    
+                    return result;
+                } 
             }
-            
-            return DownloadBinary(uri, versionNumber);
+            else
+            {
+                return DownloadBinary(uri, versionNumber);
+            }
         }
 
         private Uri GetLinkForVersion(string versionNumber)

@@ -12,5 +12,6 @@ namespace Tiver.Fowl.Drivers.Downloaders
         Unknown,
         NewFileDownloaded,
         NoDownloadedNeeded,        
+        BinaryUpdated
     }
 }
