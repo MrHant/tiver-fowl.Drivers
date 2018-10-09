@@ -66,9 +66,9 @@ namespace Tiver.Fowl.Drivers.Downloaders
                     File.WriteAllBytes(tempFile, bytes);
                 }
 
-                ZipFile.ExtractToDirectory(tempFile, _config.DownloadLocation);
+                ZipFile.ExtractToDirectory(tempFile, Config.DownloadLocation);
                 File.Delete(tempFile);
-                var versionFilePath = Path.Combine(_config.DownloadLocation, $"{Binary.DriverBinaryFilename}.version");
+                var versionFilePath = Path.Combine(Config.DownloadLocation, $"{Binary.DriverBinaryFilename}.version");
                 File.WriteAllText(versionFilePath, versionNumber);
                 return true;
             }
@@ -91,6 +91,6 @@ namespace Tiver.Fowl.Drivers.Downloaders
             }
         }
 
-        readonly IDriversConfiguration _config = (DriversConfigurationSection)ConfigurationManager.GetSection("driversConfigurationGroup/driversConfiguration");
+        private static readonly IDriversConfiguration Config = ConfigurationReader.ReadFromFileOrDefault();
     }
 }

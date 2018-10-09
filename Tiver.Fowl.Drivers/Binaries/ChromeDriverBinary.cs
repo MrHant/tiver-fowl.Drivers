@@ -10,12 +10,12 @@ namespace Tiver.Fowl.Drivers.Binaries
 
         public bool CheckBinaryExists()
         {
-            return File.Exists(Path.Combine(_config.DownloadLocation, DriverBinaryFilename));
+            return File.Exists(Path.Combine(Config.DownloadLocation, DriverBinaryFilename));
         }
 
         public string GetExistingBinaryVersion()
         {
-            var versionFilepath = Path.Combine(_config.DownloadLocation, $"{DriverBinaryFilename}.version");
+            var versionFilepath = Path.Combine(Config.DownloadLocation, $"{DriverBinaryFilename}.version");
             if (!File.Exists(versionFilepath))
             {
                 return null;
@@ -27,6 +27,6 @@ namespace Tiver.Fowl.Drivers.Binaries
             }
         }
 
-        readonly IDriversConfiguration _config = (DriversConfigurationSection)ConfigurationManager.GetSection("driversConfigurationGroup/driversConfiguration");
+        private static readonly IDriversConfiguration Config = ConfigurationReader.ReadFromFileOrDefault();
     }
 }
