@@ -42,7 +42,7 @@ namespace Tiver.Fowl.Drivers.Tests
             var downloader = new ChromeDriverDownloader();
             const string versionNumber = "2.9";
             var result = downloader.DownloadBinary(versionNumber);
-            Assert.IsTrue(result);
+            Assert.IsTrue(result.Successful);
             var exists = File.Exists(DriverFilepath);
             Assert.IsTrue(exists);
             exists = downloader.Binary.CheckBinaryExists();
@@ -60,7 +60,7 @@ namespace Tiver.Fowl.Drivers.Tests
                     .Unwrap();
 
             var result = downloader.DownloadBinary(driverConfig.Version);
-            Assert.IsTrue(result);
+            Assert.IsTrue(result.Successful);
             var exists = File.Exists(DriverFilepath);
             Assert.IsTrue(exists);
             exists = downloader.Binary.CheckBinaryExists();
@@ -73,7 +73,7 @@ namespace Tiver.Fowl.Drivers.Tests
         {
             var downloader = new ChromeDriverDownloader();
             var result = downloader.DownloadBinary("LATEST_RELEASE");
-            Assert.IsTrue(result);
+            Assert.IsTrue(result.Successful);
             var exists = File.Exists(DriverFilepath);
             Assert.IsTrue(exists);
             exists = downloader.Binary.CheckBinaryExists();

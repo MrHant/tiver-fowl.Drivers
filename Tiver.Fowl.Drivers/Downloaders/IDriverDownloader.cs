@@ -14,6 +14,6 @@ namespace Tiver.Fowl.Drivers.Downloaders
         /// </summary>
         /// <param name="versionNumber">Version to be downloaded</param>
         /// <returns>Status whether download was successful or not</returns>
-        bool DownloadBinary(string versionNumber);
+        DownloadResult DownloadBinary(string versionNumber);
     }
 }

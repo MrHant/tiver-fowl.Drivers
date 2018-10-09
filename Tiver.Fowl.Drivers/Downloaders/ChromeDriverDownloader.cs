@@ -16,7 +16,7 @@ namespace Tiver.Fowl.Drivers.Downloaders
         public IDriverBinary Binary => new ChromeDriverBinary();
         public Uri LinkForDownloadsPage => new Uri("http://chromedriver.storage.googleapis.com/");
 
-        public bool DownloadBinary(string versionNumber)
+        public DownloadResult DownloadBinary(string versionNumber)
         {
             if (versionNumber.Equals("LATEST_RELEASE"))
             {
@@ -54,8 +54,9 @@ namespace Tiver.Fowl.Drivers.Downloaders
                 : new Uri(LinkForDownloadsPage, query);
         }
 
-        private bool DownloadBinary(Uri downloadLink, string versionNumber)
+        private DownloadResult DownloadBinary(Uri downloadLink, string versionNumber)
         {
+            var result = new DownloadResult();
             try
             {
                 string tempFile;
@@ -70,12 +71,15 @@ namespace Tiver.Fowl.Drivers.Downloaders
                 File.Delete(tempFile);
                 var versionFilePath = Path.Combine(Config.DownloadLocation, $"{Binary.DriverBinaryFilename}.version");
                 File.WriteAllText(versionFilePath, versionNumber);
-                return true;
+                result.Successful = true;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return false;
+                result.Successful = false;
+                result.ErrorMessage = ex.Message;
             }
+
+            return result;
         }
 
         private string GetLatestVersion()
