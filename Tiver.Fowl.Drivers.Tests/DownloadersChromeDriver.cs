@@ -105,6 +105,21 @@ namespace Tiver.Fowl.Drivers.Tests
             exists = downloader.Binary.CheckBinaryExists();
             Assert.IsTrue(exists);
             Assert.AreEqual(versionNumber, downloader.Binary.GetExistingBinaryVersion());
+        }       
+                
+        [Test]
+        public void DownloadIncorrectVersion()
+        {
+            var downloader = new ChromeDriverDownloader();
+            const string versionNumber = "xxx";
+            var result = downloader.DownloadBinary(versionNumber);
+            Assert.IsFalse(result.Successful);
+            Assert.AreEqual(DownloaderAction.Unknown, result.PerformedAction);
+            Assert.AreEqual("Cannot find specified version to download.", result.ErrorMessage);
+            var exists = File.Exists(DriverFilepath);
+            Assert.IsFalse(exists);
+            exists = downloader.Binary.CheckBinaryExists();
+            Assert.IsFalse(exists);
         }
     }
 }

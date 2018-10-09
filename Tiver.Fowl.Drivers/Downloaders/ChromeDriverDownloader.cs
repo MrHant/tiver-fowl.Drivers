@@ -36,6 +36,14 @@ namespace Tiver.Fowl.Drivers.Downloaders
             }
             
             var uri = GetLinkForVersion(versionNumber);
+            if (uri == null)
+            {
+                return new DownloadResult
+                {
+                    ErrorMessage = "Cannot find specified version to download."
+                };
+            }
+            
             return DownloadBinary(uri, versionNumber);
         }
 
