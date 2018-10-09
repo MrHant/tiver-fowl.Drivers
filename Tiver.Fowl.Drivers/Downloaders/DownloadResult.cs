@@ -10,8 +10,8 @@ namespace Tiver.Fowl.Drivers.Downloaders
     public enum DownloaderAction
     {
         Unknown,
-        NewFileDownloaded,
-        NoDownloadedNeeded,        
-        BinaryUpdated
+        BinaryDownloaded,
+        BinaryUpdated,
+        NoDownloadNeeded,
     }
 }

@@ -39,7 +39,7 @@ namespace Tiver.Fowl.Drivers.Downloaders
                     return new DownloadResult
                     {
                         Successful = true,
-                        PerformedAction = DownloaderAction.NoDownloadedNeeded
+                        PerformedAction = DownloaderAction.NoDownloadNeeded
                     };
                 }
                 else
@@ -106,7 +106,7 @@ namespace Tiver.Fowl.Drivers.Downloaders
                 return new DownloadResult
                 {
                     Successful = true, 
-                    PerformedAction = DownloaderAction.NewFileDownloaded
+                    PerformedAction = DownloaderAction.BinaryDownloaded
                 };
             }
             catch (Exception ex)

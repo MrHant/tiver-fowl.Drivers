@@ -41,7 +41,7 @@ namespace Tiver.Fowl.Drivers.TestsWithoutConfigFile
             const string versionNumber = "2.9";
             var result = downloader.DownloadBinary(versionNumber);
             Assert.IsTrue(result.Successful);
-            Assert.AreEqual(DownloaderAction.NewFileDownloaded, result.PerformedAction);
+            Assert.AreEqual(DownloaderAction.BinaryDownloaded, result.PerformedAction);
             Assert.IsNull(result.ErrorMessage);
             var exists = File.Exists(DriverFilepath);
             Assert.IsTrue(exists);
