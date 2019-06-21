@@ -15,6 +15,7 @@ namespace Tiver.Fowl.Drivers.Downloaders
     {
         public IDriverBinary Binary => new ChromeDriverBinary();
         public Uri LinkForDownloadsPage => new Uri("http://chromedriver.storage.googleapis.com/");
+        private static readonly HttpClient HttpClient = new HttpClient();
 
         public DownloadResult DownloadBinary(string versionNumber)
         {
@@ -64,8 +65,7 @@ namespace Tiver.Fowl.Drivers.Downloaders
         {
             var keys = new List<string>();
 
-            using (var client = new HttpClient())
-            using (var response = client.GetAsync(LinkForDownloadsPage).Result)
+            using (var response = HttpClient.GetAsync(LinkForDownloadsPage).Result)
             using (var content = response.Content)
             {
                 var result = content.ReadAsStringAsync().Result;
@@ -91,13 +91,9 @@ namespace Tiver.Fowl.Drivers.Downloaders
         {
             try
             {
-                string tempFile;
-                using (var client = new HttpClient())
-                {
-                    var bytes = client.GetByteArrayAsync(downloadLink).Result;
-                    tempFile = Path.GetTempFileName();
-                    File.WriteAllBytes(tempFile, bytes);
-                }
+                var bytes = HttpClient.GetByteArrayAsync(downloadLink).Result;
+                var tempFile = Path.GetTempFileName();
+                File.WriteAllBytes(tempFile, bytes);
 
                 ZipFile.ExtractToDirectory(tempFile, Config.DownloadLocation);
                 File.Delete(tempFile);
@@ -122,8 +118,7 @@ namespace Tiver.Fowl.Drivers.Downloaders
         {
             var linkForLatestReleaseFile = new Uri(LinkForDownloadsPage, "LATEST_RELEASE");
 
-            using (var client = new HttpClient())
-            using (var response = client.GetAsync(linkForLatestReleaseFile).Result)
+            using (var response = HttpClient.GetAsync(linkForLatestReleaseFile).Result)
             using (var content = response.Content)
             {
                 var rawResult = content.ReadAsStringAsync().Result;
