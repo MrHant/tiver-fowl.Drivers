@@ -44,18 +44,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Binaries\ChromeDriverBinary.cs" />
-    <Compile Include="Binaries\IDriverBinary.cs" />
+    <Compile Include="DriverBinaries\ChromeDriverBinary.cs" />
+    <Compile Include="DriverBinaries\IDriverBinary.cs" />
     <Compile Include="Configuration\ConfigurationReader.cs" />
     <Compile Include="Configuration\DriverCollection.cs" />
     <Compile Include="Configuration\DriverElement.cs" />
     <Compile Include="Configuration\DriversConfigurationSection.cs" />
     <Compile Include="Configuration\IDriversConfiguration.cs" />
-    <Compile Include="Downloaders\ChromeDriverDownloader.cs" />
-    <Compile Include="Downloaders\DownloadResult.cs" />
-    <Compile Include="Downloaders\IDriverDownloader.cs" />
+    <Compile Include="Context.cs" />
+    <Compile Include="Downloaders.cs" />
+    <Compile Include="DriverDownloaders\ChromeDriverDownloader.cs" />
+    <Compile Include="DriverDownloaders\DownloadResult.cs" />
+    <Compile Include="DriverDownloaders\IDriverDownloader.cs" />
+    <Compile Include="Extensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

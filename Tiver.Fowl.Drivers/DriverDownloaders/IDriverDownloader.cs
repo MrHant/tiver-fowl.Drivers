@@ -1,7 +1,7 @@
 ﻿using System;
-using Tiver.Fowl.Drivers.Binaries;
+using Tiver.Fowl.Drivers.DriverBinaries;
 
-namespace Tiver.Fowl.Drivers.Downloaders
+namespace Tiver.Fowl.Drivers.DriverDownloaders
 {
     public interface IDriverDownloader
     {

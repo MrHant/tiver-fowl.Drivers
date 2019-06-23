@@ -27,6 +27,13 @@ namespace Tiver.Fowl.Drivers.Configuration
             set => this[""] = value;
         }
 
+        [ConfigurationProperty("httpTimeout", IsRequired = false, DefaultValue = 100)]
+        public int HttpTimeout
+        {
+            get => (int)this["httpTimeout"];
+            set => this["httpTimeout"] = value;
+        }
+
         [ConfigurationProperty("downloadLocation", IsRequired = false)]
         private string DownloadLocationElement
         {
