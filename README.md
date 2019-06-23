@@ -15,7 +15,7 @@ Download WebDriver drivers' binaries from official sources
 ### Download configured "chrome" driver
 
 ```c#
-var config = (IDriversConfiguration) ConfigurationManager.GetSection("driversConfigurationGroup/driversConfiguration");
+var config = (IDriversConfiguration) ConfigurationManager.GetSection("driversConfiguration");
 var driverConfig = config.Instances.Cast<DriverElement>().Single(d => d.Name.Equals("chrome"));
 var downloader = (IDriverDownloader)Activator.CreateInstance(
     "Tiver.Fowl.Drivers",
@@ -35,20 +35,14 @@ var result = downloader.DownloadBinary(driverConfig.Version);
 <configuration>
   <!-- Configuration section-handler declaration area. -->
   <configSections>
-    <sectionGroup name="driversConfigurationGroup">
-      <section
-        name="driversConfiguration"
-        type="Tiver.Fowl.Drivers.Configuration.DriversConfigurationSection, Tiver.Fowl.Drivers"
-        allowLocation="true"
-        allowDefinition="Everywhere" />
-    </sectionGroup>
+    <section
+      name="driversConfiguration"
+      type="Tiver.Fowl.Drivers.Configuration.DriversConfigurationSection, Tiver.Fowl.Drivers" />
   </configSections>
 
   <!-- Configuration section settings area. -->
-  <driversConfigurationGroup>
-    <driversConfiguration httpTimeout="100">
-      <add name="chrome" downloaderType="ChromeDriverDownloader" version="2.9" />
-    </driversConfiguration>
-  </driversConfigurationGroup>
+  <driversConfiguration httpTimeout="100">
+    <add name="chrome" downloaderType="ChromeDriverDownloader" version="2.9" />
+  </driversConfiguration>
 </configuration>
 ```

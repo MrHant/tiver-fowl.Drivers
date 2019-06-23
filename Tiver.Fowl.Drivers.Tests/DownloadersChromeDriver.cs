@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Configuration;
 using System.IO;
 using System.Linq;
 using NUnit.Framework;
@@ -11,8 +10,7 @@ namespace Tiver.Fowl.Drivers.Tests
     [TestFixture]
     public class DownloadersChromeDriver
     {
-        private static IDriversConfiguration Config =>
-            (IDriversConfiguration) ConfigurationManager.GetSection("driversConfigurationGroup/driversConfiguration");
+        private static IDriversConfiguration Config => ConfigurationReader.ReadFromFileOrDefault();
 
         private static string DriverFilepath => Path.Combine(Config.DownloadLocation, "chromedriver.exe");
 
