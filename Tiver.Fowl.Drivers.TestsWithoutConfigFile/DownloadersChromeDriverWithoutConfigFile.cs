@@ -1,8 +1,7 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using NUnit.Framework;
 using Tiver.Fowl.Drivers.Configuration;
-using Tiver.Fowl.Drivers.Downloaders;
+using Tiver.Fowl.Drivers.DriverDownloaders;
 
 namespace Tiver.Fowl.Drivers.TestsWithoutConfigFile
 {

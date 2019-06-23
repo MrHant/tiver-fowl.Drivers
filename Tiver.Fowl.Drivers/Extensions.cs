@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Tiver.Fowl.Drivers.Downloaders
+namespace Tiver.Fowl.Drivers
 {
     public static class Extensions
     {

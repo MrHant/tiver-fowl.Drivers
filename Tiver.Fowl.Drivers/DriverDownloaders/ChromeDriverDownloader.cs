@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
-using System.Net.Http;
 using System.Xml;
-using Tiver.Fowl.Drivers.Binaries;
 using Tiver.Fowl.Drivers.Configuration;
+using Tiver.Fowl.Drivers.DriverBinaries;
 
-namespace Tiver.Fowl.Drivers.Downloaders
+namespace Tiver.Fowl.Drivers.DriverDownloaders
 {
     public class ChromeDriverDownloader : IDriverDownloader
     {

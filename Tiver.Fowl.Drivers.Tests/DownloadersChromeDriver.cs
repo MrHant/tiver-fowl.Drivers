@@ -1,9 +1,7 @@
-﻿using System;
-using System.IO;
-using System.Linq;
+﻿using System.IO;
 using NUnit.Framework;
 using Tiver.Fowl.Drivers.Configuration;
-using Tiver.Fowl.Drivers.Downloaders;
+using Tiver.Fowl.Drivers.DriverDownloaders;
 
 namespace Tiver.Fowl.Drivers.Tests
 {
@@ -53,13 +51,8 @@ namespace Tiver.Fowl.Drivers.Tests
         [Test]
         public void Download_From_Configuration()
         {
-            var driverConfig = Config.Instances.Cast<DriverElement>().Single(d => d.Name.Equals("chrome"));
-            var downloader = (IDriverDownloader)Activator.CreateInstance(
-                "Tiver.Fowl.Drivers", 
-                $"Tiver.Fowl.Drivers.Downloaders.{driverConfig.DownloaderType}")
-                    .Unwrap();
-
-            var result = downloader.DownloadBinary(driverConfig.Version);
+            var downloader = Downloaders.Get("chrome");
+            var result = downloader.DownloadBinary("2.9");
             Assert.IsTrue(result.Successful, $"Reported error message:{result.ErrorMessage}");
             Assert.AreEqual(DownloaderAction.BinaryDownloaded, result.PerformedAction);
             Assert.IsNull(result.ErrorMessage);
@@ -67,7 +60,21 @@ namespace Tiver.Fowl.Drivers.Tests
             Assert.IsTrue(exists);
             exists = downloader.Binary.CheckBinaryExists();
             Assert.IsTrue(exists);
-            Assert.AreEqual(driverConfig.Version, downloader.Binary.GetExistingBinaryVersion());
+            Assert.AreEqual("2.9", downloader.Binary.GetExistingBinaryVersion());
+        }
+
+        [Test]
+        public void Download_From_Configuration_directly()
+        {
+            var result = Downloaders.DownloadBinary("chrome");
+            Assert.IsTrue(result.Successful, $"Reported error message:{result.ErrorMessage}");
+            Assert.AreEqual(DownloaderAction.BinaryDownloaded, result.PerformedAction);
+            Assert.IsNull(result.ErrorMessage);
+            var exists = File.Exists(DriverFilepath);
+            Assert.IsTrue(exists);
+            exists = new ChromeDriverDownloader().Binary.CheckBinaryExists();
+            Assert.IsTrue(exists);
+            Assert.AreEqual("2.9", new ChromeDriverDownloader().Binary.GetExistingBinaryVersion());
         }
 
         [Test]

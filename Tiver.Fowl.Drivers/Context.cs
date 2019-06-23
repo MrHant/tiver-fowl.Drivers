@@ -2,7 +2,7 @@ using System;
 using System.Net.Http;
 using Tiver.Fowl.Drivers.Configuration;
 
-namespace Tiver.Fowl.Drivers.Downloaders
+namespace Tiver.Fowl.Drivers
 {
     public static class Context
     {
