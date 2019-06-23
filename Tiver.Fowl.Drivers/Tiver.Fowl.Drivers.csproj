@@ -52,7 +52,9 @@
     <Compile Include="Configuration\DriversConfigurationSection.cs" />
     <Compile Include="Configuration\IDriversConfiguration.cs" />
     <Compile Include="Downloaders\ChromeDriverDownloader.cs" />
+    <Compile Include="Downloaders\Context.cs" />
     <Compile Include="Downloaders\DownloadResult.cs" />
+    <Compile Include="Downloaders\Extensions.cs" />
     <Compile Include="Downloaders\IDriverDownloader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
