@@ -17,7 +17,7 @@ namespace Tiver.Fowl.Drivers
             return downloader;
         }
         
-        public static DownloadResult DownloadBinary(string name)
+        public static DownloadResult DownloadBinaryFor(string name)
         {
             var driverConfig = GetDriverConfiguration(name);
             var downloader = (IDriverDownloader)Activator.CreateInstance(

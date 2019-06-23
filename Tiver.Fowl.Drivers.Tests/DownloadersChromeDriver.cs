@@ -66,7 +66,7 @@ namespace Tiver.Fowl.Drivers.Tests
         [Test]
         public void Download_From_Configuration_directly()
         {
-            var result = Downloaders.DownloadBinary("chrome");
+            var result = Downloaders.DownloadBinaryFor("chrome");
             Assert.IsTrue(result.Successful, $"Reported error message:{result.ErrorMessage}");
             Assert.AreEqual(DownloaderAction.BinaryDownloaded, result.PerformedAction);
             Assert.IsNull(result.ErrorMessage);
