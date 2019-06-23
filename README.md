@@ -15,7 +15,7 @@ Download WebDriver drivers' binaries from official sources
 ### Download chrome driver of specific version
 
 ```c#
-var result = new ChromeDriverDownloader().DownloadBinary("2.9");
+var result = new ChromeDriverDownloader().DownloadBinary("76.0.3809.25");
 ```
 
 ### Download configured "chrome" driver
@@ -28,7 +28,7 @@ var result = Downloaders.DownloadBinaryFor("chrome");
 
 ## Sample configuration
 
-### Config for ChromeDriver v2.9
+### Config for ChromeDriver v76.0.3809.25
 ```xml
 <?xml version="1.0" encoding="utf-8" ?>
 <configuration>
@@ -41,7 +41,7 @@ var result = Downloaders.DownloadBinaryFor("chrome");
 
   <!-- Configuration section settings area. -->
   <driversConfiguration httpTimeout="100">
-    <add name="chrome" downloaderType="ChromeDriverDownloader" version="2.9" />
+    <add name="chrome" downloaderType="ChromeDriverDownloader" version="76.0.3809.25" />
   </driversConfiguration>
 </configuration>
 ```
