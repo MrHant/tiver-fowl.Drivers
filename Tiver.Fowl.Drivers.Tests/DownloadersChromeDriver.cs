@@ -42,7 +42,7 @@ namespace Tiver.Fowl.Drivers.Tests
             var downloader = new ChromeDriverDownloader();
             const string versionNumber = "2.9";
             var result = downloader.DownloadBinary(versionNumber);
-            Assert.IsTrue(result.Successful);
+            Assert.IsTrue(result.Successful, $"Reported error message:{result.ErrorMessage}");
             Assert.AreEqual(DownloaderAction.BinaryDownloaded, result.PerformedAction);
             Assert.IsNull(result.ErrorMessage);
             var exists = File.Exists(DriverFilepath);
@@ -62,7 +62,7 @@ namespace Tiver.Fowl.Drivers.Tests
                     .Unwrap();
 
             var result = downloader.DownloadBinary(driverConfig.Version);
-            Assert.IsTrue(result.Successful);
+            Assert.IsTrue(result.Successful, $"Reported error message:{result.ErrorMessage}");
             Assert.AreEqual(DownloaderAction.BinaryDownloaded, result.PerformedAction);
             Assert.IsNull(result.ErrorMessage);
             var exists = File.Exists(DriverFilepath);
@@ -77,7 +77,7 @@ namespace Tiver.Fowl.Drivers.Tests
         {
             var downloader = new ChromeDriverDownloader();
             var result = downloader.DownloadBinary("LATEST_RELEASE");
-            Assert.IsTrue(result.Successful);
+            Assert.IsTrue(result.Successful, $"Reported error message:{result.ErrorMessage}");
             Assert.AreEqual(DownloaderAction.BinaryDownloaded, result.PerformedAction);
             Assert.IsNull(result.ErrorMessage);
             var exists = File.Exists(DriverFilepath);
@@ -93,7 +93,7 @@ namespace Tiver.Fowl.Drivers.Tests
             var downloader = new ChromeDriverDownloader();
             const string versionNumber = "2.9";
             var result = downloader.DownloadBinary(versionNumber);
-            Assert.IsTrue(result.Successful);
+            Assert.IsTrue(result.Successful, $"Reported error message:{result.ErrorMessage}");
             Assert.AreEqual(DownloaderAction.BinaryDownloaded, result.PerformedAction);
             Assert.IsNull(result.ErrorMessage);
             var resultTwo = downloader.DownloadBinary(versionNumber);
@@ -128,7 +128,7 @@ namespace Tiver.Fowl.Drivers.Tests
             var downloader = new ChromeDriverDownloader();
             var versionNumber = "2.9";
             var result = downloader.DownloadBinary(versionNumber);
-            Assert.IsTrue(result.Successful);
+            Assert.IsTrue(result.Successful, $"Reported error message:{result.ErrorMessage}");
             Assert.AreEqual(DownloaderAction.BinaryDownloaded, result.PerformedAction);
             Assert.IsNull(result.ErrorMessage);
             var exists = File.Exists(DriverFilepath);
@@ -139,7 +139,7 @@ namespace Tiver.Fowl.Drivers.Tests
             
             versionNumber = "2.10";
             result = downloader.DownloadBinary(versionNumber);
-            Assert.IsTrue(result.Successful);
+            Assert.IsTrue(result.Successful, $"Reported error message:{result.ErrorMessage}");
             Assert.AreEqual(DownloaderAction.BinaryUpdated, result.PerformedAction);
             Assert.IsNull(result.ErrorMessage);
             exists = File.Exists(DriverFilepath);

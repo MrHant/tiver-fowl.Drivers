@@ -20,15 +20,40 @@ namespace Tiver.Fowl.Drivers.Downloaders
         {
             if (versionNumber.Equals("LATEST_RELEASE"))
             {
-                versionNumber = GetLatestVersion();
+                try
+                {
+                    versionNumber = GetLatestVersion();
+                }
+                catch (Exception ex)
+                {
+                    var message = ex.GetAllExceptionsMessages();
+                    return new DownloadResult
+                    {
+                        Successful = false,
+                        ErrorMessage = message
+                    };
+                }
             }
 
-            var uri = GetLinkForVersion(versionNumber);
-            if (uri == null)
+            Uri uri;
+            try
             {
+                uri = GetLinkForVersion(versionNumber);
+                if (uri == null)
+                {
+                    return new DownloadResult
+                    {
+                        ErrorMessage = "Cannot find specified version to download."
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                var message = ex.GetAllExceptionsMessages();
                 return new DownloadResult
                 {
-                    ErrorMessage = "Cannot find specified version to download."
+                    Successful = false,
+                    ErrorMessage = message
                 };
             }
             
@@ -49,10 +74,10 @@ namespace Tiver.Fowl.Drivers.Downloaders
                     if (result.Successful)
                     {
                         result.PerformedAction = DownloaderAction.BinaryUpdated;
-                    } 
-                    
+                    }
+
                     return result;
-                } 
+                }
             }
             else
             {
@@ -64,8 +89,7 @@ namespace Tiver.Fowl.Drivers.Downloaders
         {
             var keys = new List<string>();
 
-            using (var client = new HttpClient())
-            using (var response = client.GetAsync(LinkForDownloadsPage).Result)
+            using (var response = Context.HttpClient.GetAsync(LinkForDownloadsPage).Result)
             using (var content = response.Content)
             {
                 var result = content.ReadAsStringAsync().Result;
@@ -82,8 +106,8 @@ namespace Tiver.Fowl.Drivers.Downloaders
 
             var query = keys.SingleOrDefault(k => k.StartsWith(versionNumber) && k.EndsWith("win32.zip"));
 
-            return query == null 
-                ? null 
+            return query == null
+                ? null
                 : new Uri(LinkForDownloadsPage, query);
         }
 
@@ -91,13 +115,9 @@ namespace Tiver.Fowl.Drivers.Downloaders
         {
             try
             {
-                string tempFile;
-                using (var client = new HttpClient())
-                {
-                    var bytes = client.GetByteArrayAsync(downloadLink).Result;
-                    tempFile = Path.GetTempFileName();
-                    File.WriteAllBytes(tempFile, bytes);
-                }
+                var bytes = Context.HttpClient.GetByteArrayAsync(downloadLink).Result;
+                var tempFile = Path.GetTempFileName();
+                File.WriteAllBytes(tempFile, bytes);
 
                 ZipFile.ExtractToDirectory(tempFile, Config.DownloadLocation);
                 File.Delete(tempFile);
@@ -105,15 +125,17 @@ namespace Tiver.Fowl.Drivers.Downloaders
                 File.WriteAllText(versionFilePath, versionNumber);
                 return new DownloadResult
                 {
-                    Successful = true, 
+                    Successful = true,
                     PerformedAction = DownloaderAction.BinaryDownloaded
                 };
             }
             catch (Exception ex)
             {
+                var message = ex.GetAllExceptionsMessages();
                 return new DownloadResult
                 {
-                    ErrorMessage = ex.Message
+                    Successful = false,
+                    ErrorMessage = message
                 };
             }
         }
@@ -122,8 +144,7 @@ namespace Tiver.Fowl.Drivers.Downloaders
         {
             var linkForLatestReleaseFile = new Uri(LinkForDownloadsPage, "LATEST_RELEASE");
 
-            using (var client = new HttpClient())
-            using (var response = client.GetAsync(linkForLatestReleaseFile).Result)
+            using (var response = Context.HttpClient.GetAsync(linkForLatestReleaseFile).Result)
             using (var content = response.Content)
             {
                 var rawResult = content.ReadAsStringAsync().Result;

@@ -46,7 +46,7 @@ var result = downloader.DownloadBinary(driverConfig.Version);
 
   <!-- Configuration section settings area. -->
   <driversConfigurationGroup>
-    <driversConfiguration>
+    <driversConfiguration httpTimeout="100">
       <add name="chrome" downloaderType="ChromeDriverDownloader" version="2.9" />
     </driversConfiguration>
   </driversConfigurationGroup>
