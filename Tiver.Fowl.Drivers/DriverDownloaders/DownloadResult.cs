@@ -1,4 +1,4 @@
-namespace Tiver.Fowl.Drivers.Downloaders
+namespace Tiver.Fowl.Drivers.DriverDownloaders
 {
     public class DownloadResult
     {

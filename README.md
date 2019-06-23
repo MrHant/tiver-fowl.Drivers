@@ -12,43 +12,36 @@ Download WebDriver drivers' binaries from official sources
   * ```LATEST_RELEASE``` version can be used to download latest driver version
 
 ## Sample usage
+### Download chrome driver of specific version
+
+```c#
+var result = new ChromeDriverDownloader().DownloadBinary("2.9");
+```
+
 ### Download configured "chrome" driver
 
 ```c#
-var config = (IDriversConfiguration) ConfigurationManager.GetSection("driversConfigurationGroup/driversConfiguration");
-var driverConfig = config.Instances.Cast<DriverElement>().Single(d => d.Name.Equals("chrome"));
-var downloader = (IDriverDownloader)Activator.CreateInstance(
-    "Tiver.Fowl.Drivers",
-    $"Tiver.Fowl.Drivers.Downloaders.{driverConfig.DownloaderType}")
-        .Unwrap();
-
-var result = downloader.DownloadBinary(driverConfig.Version);
+var result = Downloaders.DownloadBinaryFor("chrome");
 ```
 
 
 
 ## Sample configuration
 
-### Downloading ChromeDriver v2.9
+### Config for ChromeDriver v2.9
 ```xml
 <?xml version="1.0" encoding="utf-8" ?>
 <configuration>
   <!-- Configuration section-handler declaration area. -->
   <configSections>
-    <sectionGroup name="driversConfigurationGroup">
-      <section
-        name="driversConfiguration"
-        type="Tiver.Fowl.Drivers.Configuration.DriversConfigurationSection, Tiver.Fowl.Drivers"
-        allowLocation="true"
-        allowDefinition="Everywhere" />
-    </sectionGroup>
+    <section
+      name="driversConfiguration"
+      type="Tiver.Fowl.Drivers.Configuration.DriversConfigurationSection, Tiver.Fowl.Drivers" />
   </configSections>
 
   <!-- Configuration section settings area. -->
-  <driversConfigurationGroup>
-    <driversConfiguration httpTimeout="100">
-      <add name="chrome" downloaderType="ChromeDriverDownloader" version="2.9" />
-    </driversConfiguration>
-  </driversConfigurationGroup>
+  <driversConfiguration httpTimeout="100">
+    <add name="chrome" downloaderType="ChromeDriverDownloader" version="2.9" />
+  </driversConfiguration>
 </configuration>
 ```

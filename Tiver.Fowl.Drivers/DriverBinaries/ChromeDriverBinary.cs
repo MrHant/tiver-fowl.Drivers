@@ -1,8 +1,7 @@
-﻿using System.Configuration;
-using System.IO;
+﻿using System.IO;
 using Tiver.Fowl.Drivers.Configuration;
 
-namespace Tiver.Fowl.Drivers.Binaries
+namespace Tiver.Fowl.Drivers.DriverBinaries
 {
     public class ChromeDriverBinary : IDriverBinary
     {

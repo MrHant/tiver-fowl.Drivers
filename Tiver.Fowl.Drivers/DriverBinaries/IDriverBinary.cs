@@ -1,4 +1,4 @@
-﻿namespace Tiver.Fowl.Drivers.Binaries
+﻿namespace Tiver.Fowl.Drivers.DriverBinaries
 {
     public interface IDriverBinary
     {
