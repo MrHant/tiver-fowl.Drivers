@@ -102,7 +102,7 @@ namespace Tiver.Fowl.Drivers.DriverDownloaders
                 keys.AddRange(from XmlNode node in nodes select node.InnerText);
             }
 
-            var query = keys.SingleOrDefault(k => k.StartsWith(versionNumber) && k.EndsWith("win32.zip"));
+            var query = keys.SingleOrDefault(k => k.StartsWith($"{versionNumber}/") && k.EndsWith("win32.zip"));
 
             return query == null
                 ? null
