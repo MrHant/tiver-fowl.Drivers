@@ -17,7 +17,7 @@ namespace Tiver.Fowl.Drivers
             do
             {
                 yield return innerException;
-                innerException = innerException.InnerException;
+                innerException = innerException?.InnerException;
             } while (innerException != null);
         }
 
@@ -28,7 +28,7 @@ namespace Tiver.Fowl.Drivers
                 return string.Empty;
             }
 
-            return string.Join(" ", ex.GetInnerExceptions().Select(e => e.Message));
+            return string.Join(" ", ex.GetInnerExceptions().Select(e => e?.Message ?? string.Empty));
         }
 
         public static string GetAllExceptionsMessages(this Exception ex)
