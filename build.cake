@@ -1,15 +1,9 @@
 const string project = "Tiver.Fowl.Drivers";
 var target = Argument("target", "Default");
 var configuration = Argument("configuration", "Release");
-var solutionFilename = Argument("solutionFilename", project + ".sln");
-var projects = Argument("projects", project + ";" + project + ".Tests");
+var projects = Argument("projects", project + ";" + project + ".Tests;" + project + ".TestsWithoutConfigFile");
 
 var projectDirectories = projects.Split(';');
-
-DirectoryPath vsLatest  = VSWhereLatest();
-var msBuildPath = (vsLatest==null)
-                            ? null
-                            : vsLatest.CombineWithFilePath("./MSBuild/15.0/Bin/MSBuild.exe");
 
 GitVersion versionInfo;
 string version;
@@ -35,8 +29,8 @@ Teardown(_ =>
 Task("RestoreNuGetPackages")
     .Does(() =>
 {
-    Information("Restoring nuget packages for {0}", solutionFilename);
-    NuGetRestore("./" + solutionFilename);
+    Information("Restoring nuget packages");
+    DotNetCoreRestore();
 });
 
 Task("Clean")
@@ -55,25 +49,21 @@ Task("Build")
     .IsDependentOn("Version")
     .Does(() =>
 {
-    Information("Building {0} with configuration {1}", solutionFilename, configuration);
-    MSBuild("./" + solutionFilename, new MSBuildSettings {
-        ToolVersion = MSBuildToolVersion.VS2017,
-        Configuration = configuration,
-        ToolPath = msBuildPath
-    });
+    Information("Building with configuration {0}", configuration);
+    var settings = new DotNetCoreBuildSettings
+     {
+         Framework = "netcoreapp3.1",
+         Configuration = configuration,
+     };
+
+     DotNetCoreBuild("./"+project+"/"+project+".csproj", settings);
 });
 
 Task("RunUnitTests")
     .IsDependentOn("Build")
     .Does(() =>
 {
-    NUnit("./" + project + ".Tests" + "/bin/" + configuration + "/" + project + ".Tests.dll", new NUnitSettings {
-        ToolPath = "./tools/NUnit.ConsoleRunner/tools/nunit3-console.exe"
-    });
-
-    NUnit("./" + project + ".TestsWithoutConfigFile" + "/bin/" + configuration + "/" + project + ".TestsWithoutConfigFile.dll", new NUnitSettings {
-        ToolPath = "./tools/NUnit.ConsoleRunner/tools/nunit3-console.exe"
-    });
+    DotNetCoreTest();
 });
 
 Task("Version")

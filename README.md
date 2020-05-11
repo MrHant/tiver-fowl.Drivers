@@ -1,4 +1,4 @@
-# tiver-fowl.Drivers [![NuGet](https://img.shields.io/nuget/v/Tiver.Fowl.Drivers.svg)](https://www.nuget.org/packages/Tiver.Fowl.Drivers/) [![Codacy Badge](https://img.shields.io/codacy/grade/2ecdd0d0d6af44e480bb899af695e442/master.svg)](https://www.codacy.com/app/mr.hant/tiver-fowl.Drivers?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=MrHant/tiver-fowl.Drivers&amp;utm_campaign=Badge_Grade) [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/MrHant/tiver-fowl/master/LICENSE)
+# tiver-fowl.Drivers ![.NET Core](https://img.shields.io/badge/.NET%20Core-3.1-blue) [![NuGet](https://img.shields.io/nuget/v/Tiver.Fowl.Drivers.svg)](https://www.nuget.org/packages/Tiver.Fowl.Drivers/) [![Codacy Badge](https://img.shields.io/codacy/grade/2ecdd0d0d6af44e480bb899af695e442/master.svg)](https://www.codacy.com/app/mr.hant/tiver-fowl.Drivers?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=MrHant/tiver-fowl.Drivers&amp;utm_campaign=Badge_Grade) [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/MrHant/tiver-fowl/master/LICENSE)
 
 
 Download WebDriver drivers' binaries from official sources
@@ -15,7 +15,7 @@ Download WebDriver drivers' binaries from official sources
 ### Download chrome driver of specific version
 
 ```c#
-var result = new ChromeDriverDownloader().DownloadBinary("76.0.3809.25");
+var result = new ChromeDriverDownloader().DownloadBinary("76.0.3809.25", "win32");
 ```
 
 ### Download configured "chrome" driver
@@ -28,20 +28,22 @@ var result = Downloaders.DownloadBinaryFor("chrome");
 
 ## Sample configuration
 
-### Config for ChromeDriver v76.0.3809.25
-```xml
-<?xml version="1.0" encoding="utf-8" ?>
-<configuration>
-  <!-- Configuration section-handler declaration area. -->
-  <configSections>
-    <section
-      name="driversConfiguration"
-      type="Tiver.Fowl.Drivers.Configuration.DriversConfigurationSection, Tiver.Fowl.Drivers" />
-  </configSections>
+Configuration is stored in file `Tiver_config.json`
 
-  <!-- Configuration section settings area. -->
-  <driversConfiguration httpTimeout="100">
-    <add name="chrome" downloaderType="ChromeDriverDownloader" version="76.0.3809.25" />
-  </driversConfiguration>
-</configuration>
+### Config for ChromeDriver v76.0.3809.25
+
+```json
+{
+  "Tiver.Fowl.Drivers": {
+    "HttpTimeout": 120,
+    "Drivers": [
+      {
+        "Name": "chrome",
+        "DownloaderType": "ChromeDriverDownloader",
+        "Version": "76.0.3809.25",
+        "Platform": "win32"
+      }
+    ]
+  }
+}
 ```
