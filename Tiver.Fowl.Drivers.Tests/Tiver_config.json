@@ -5,7 +5,8 @@
       {
         "Name": "chrome",
         "DownloaderType": "ChromeDriverDownloader",
-        "Version": "76.0.3809.25"
+        "Version": "76.0.3809.25",
+        "Platform": "win32"
       }
     ]
   }
