@@ -7,9 +7,9 @@ namespace Tiver.Fowl.Drivers
 {
     public static class Downloaders
     {
-        public static IDriverDownloader Get(string name, string configSectionName = null)
+        public static IDriverDownloader Get(string name)
         {
-            var driverConfig = GetDriverConfiguration(name, configSectionName);
+            var driverConfig = GetDriverConfiguration(name);
             var downloader = (IDriverDownloader)Activator.CreateInstance(
                     "Tiver.Fowl.Drivers", 
                     $"Tiver.Fowl.Drivers.DriverDownloaders.{driverConfig.DownloaderType}")
@@ -17,9 +17,9 @@ namespace Tiver.Fowl.Drivers
             return downloader;
         }
         
-        public static DownloadResult DownloadBinaryFor(string name, string configSectionName = null)
+        public static DownloadResult DownloadBinaryFor(string name)
         {
-            var driverConfig = GetDriverConfiguration(name, configSectionName);
+            var driverConfig = GetDriverConfiguration(name);
             var downloader = (IDriverDownloader)Activator.CreateInstance(
                     "Tiver.Fowl.Drivers", 
                     $"Tiver.Fowl.Drivers.DriverDownloaders.{driverConfig.DownloaderType}")
@@ -27,10 +27,9 @@ namespace Tiver.Fowl.Drivers
             return downloader.DownloadBinary(driverConfig.Version);
         }
 
-        private static DriverElement GetDriverConfiguration(string name, string configSectionName = null)
+        private static DriverElement GetDriverConfiguration(string name)
         {
-            var config = ConfigurationReader.ReadFromFileOrDefault(configSectionName);
-            return config.Instances.Cast<DriverElement>().Single(d => d.Name.Equals(name));
+            return Context.Configuration.Instances.Single(i => i.Name.Equals(name));
         }
     }
 }

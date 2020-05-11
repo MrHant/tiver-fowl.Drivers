@@ -117,9 +117,9 @@ namespace Tiver.Fowl.Drivers.DriverDownloaders
                 var tempFile = Path.GetTempFileName();
                 File.WriteAllBytes(tempFile, bytes);
 
-                ZipFile.ExtractToDirectory(tempFile, Config.DownloadLocation);
+                ZipFile.ExtractToDirectory(tempFile, Context.Configuration.DownloadLocation);
                 File.Delete(tempFile);
-                var versionFilePath = Path.Combine(Config.DownloadLocation, $"{Binary.DriverBinaryFilename}.version");
+                var versionFilePath = Path.Combine(Context.Configuration.DownloadLocation, $"{Binary.DriverBinaryFilename}.version");
                 File.WriteAllText(versionFilePath, versionNumber);
                 return new DownloadResult
                 {
@@ -149,7 +149,5 @@ namespace Tiver.Fowl.Drivers.DriverDownloaders
                 return rawResult.Trim();
             }
         }
-
-        private static readonly IDriversConfiguration Config = ConfigurationReader.ReadFromFileOrDefault();
     }
 }

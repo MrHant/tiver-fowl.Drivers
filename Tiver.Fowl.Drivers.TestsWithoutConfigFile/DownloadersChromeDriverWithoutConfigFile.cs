@@ -8,7 +8,7 @@ namespace Tiver.Fowl.Drivers.TestsWithoutConfigFile
     [TestFixture]
     public class DownloadersChromeDriverWithoutConfigFile
     {
-        private static IDriversConfiguration Config => new DriversConfigurationSection();
+        private static DriversConfiguration Config => new DriversConfiguration();
 
         private static string DriverFilepath => Path.Combine(Config.DownloadLocation, "chromedriver.exe");
 

@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using Microsoft.Extensions.Configuration;
 using NUnit.Framework;
 using Tiver.Fowl.Drivers.Configuration;
 using Tiver.Fowl.Drivers.DriverDownloaders;
@@ -8,7 +9,19 @@ namespace Tiver.Fowl.Drivers.Tests
     [TestFixture]
     public class DownloadersChromeDriver
     {
-        private static IDriversConfiguration Config => ConfigurationReader.ReadFromFileOrDefault();
+        private static DriversConfiguration Config
+        {
+            get
+            {
+                var driversConfiguration = new DriversConfiguration();
+
+                var config = new ConfigurationBuilder()
+                    .AddJsonFile("Tiver_config.json", optional: true)
+                    .Build();
+                config.GetSection("Tiver.Fowl.Drivers").Bind(driversConfiguration);
+                return driversConfiguration;
+            }
+        }
 
         private static string DriverFilepath => Path.Combine(Config.DownloadLocation, "chromedriver.exe");
 

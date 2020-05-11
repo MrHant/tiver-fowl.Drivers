@@ -5,16 +5,20 @@
     <version>0.1.3</version>
     <authors>Artyom Silivonchik</authors>
     <owners>Artyom Silivonchik</owners>
-    <licenseUrl>https://raw.githubusercontent.com/MrHant/tiver-fowl.Drivers/master/LICENSE</licenseUrl>
+    <license type="expression">MIT</license>
     <projectUrl>https://github.com/MrHant/tiver-fowl.Drivers</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Configurable WebDriver downloaders.</description>
-    <dependencies />
-    <frameworkAssemblies>
-      <frameworkAssembly assemblyName="System.Configuration" />
-    </frameworkAssemblies>
+    <dependencies>
+      <group targetFramework=".NETCoreApp3.1">
+        <dependency id="Microsoft.Extensions.Configuration" version="3.1.3" />
+        <dependency id="Microsoft.Extensions.Configuration.Binder" version="3.1.3" />
+        <dependency id="Microsoft.Extensions.Configuration.Json" version="3.1.3" />
+      </group>
+    </dependencies>
   </metadata>
   <files>
-    <file src="..\Tiver.Fowl.Drivers\bin\Release\Tiver.*" target="lib\net45" />
+    <file src="..\Tiver.Fowl.Drivers\bin\Release\netcoreapp3.1\Tiver.*.dll" target="lib\netcoreapp3.1" />
+    <file src="..\Tiver.Fowl.Drivers\bin\Release\netcoreapp3.1\Tiver.*.pdb" target="lib\netcoreapp3.1" />
   </files>
 </package>

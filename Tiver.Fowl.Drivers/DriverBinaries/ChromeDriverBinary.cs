@@ -32,8 +32,7 @@ namespace Tiver.Fowl.Drivers.DriverBinaries
             File.Delete(DriverBinaryVersionFilepath);
         }
 
-        private static readonly IDriversConfiguration Config = ConfigurationReader.ReadFromFileOrDefault();
-        private string DriverBinaryFilepath => Path.Combine(Config.DownloadLocation, DriverBinaryFilename);
-        private string DriverBinaryVersionFilepath => Path.Combine(Config.DownloadLocation, $"{DriverBinaryFilename}.version");
+        private string DriverBinaryFilepath => Path.Combine(Context.Configuration.DownloadLocation, DriverBinaryFilename);
+        private string DriverBinaryVersionFilepath => Path.Combine(Context.Configuration.DownloadLocation, $"{DriverBinaryFilename}.version");
     }
 }
