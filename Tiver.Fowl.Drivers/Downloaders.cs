@@ -29,7 +29,7 @@ namespace Tiver.Fowl.Drivers
 
         private static DriverElement GetDriverConfiguration(string name)
         {
-            return Context.Configuration.Instances.Single(i => i.Name.Equals(name));
+            return Context.Configuration.Drivers.Single(i => i.Name.Equals(name));
         }
     }
 }

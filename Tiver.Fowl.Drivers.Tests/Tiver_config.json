@@ -1,7 +1,7 @@
 {
   "Tiver.Fowl.Drivers": {
     "HttpTimeout": 120,
-    "Instances": [
+    "Drivers": [
       {
         "Name": "chrome",
         "DownloaderType": "ChromeDriverDownloader",
