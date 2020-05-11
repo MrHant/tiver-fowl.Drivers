@@ -14,7 +14,7 @@ namespace Tiver.Fowl.Drivers.Configuration
         /// <summary>
         /// Configured driver instances
         /// </summary>
-        public DriverElement[] Instances { get; set; } = {};
+        public DriverElement[] Drivers { get; set; } = {};
 
         /// <summary>
         /// Timeout to be used for HTTP requests

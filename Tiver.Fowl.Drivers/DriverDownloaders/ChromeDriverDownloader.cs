@@ -4,17 +4,17 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Xml;
-using Tiver.Fowl.Drivers.Configuration;
 using Tiver.Fowl.Drivers.DriverBinaries;
 
 namespace Tiver.Fowl.Drivers.DriverDownloaders
 {
     public class ChromeDriverDownloader : IDriverDownloader
     {
-        public IDriverBinary Binary => new ChromeDriverBinary();
+        public IDriverBinary Binary { get; set; }
+
         public Uri LinkForDownloadsPage => new Uri("http://chromedriver.storage.googleapis.com/");
 
-        public DownloadResult DownloadBinary(string versionNumber)
+        public DownloadResult DownloadBinary(string versionNumber, string platform)
         {
             if (versionNumber.Equals("LATEST_RELEASE"))
             {
@@ -32,11 +32,19 @@ namespace Tiver.Fowl.Drivers.DriverDownloaders
                     };
                 }
             }
-
+            
+            Binary = new DriverBinary(
+                platform switch
+                {
+                    "win32" => "chromedriver.exe",
+                    _ => "chromedriver"
+                }
+            );
+            
             Uri uri;
             try
             {
-                uri = GetLinkForVersion(versionNumber);
+                uri = GetLinkForVersion(versionNumber, platform);
                 if (uri == null)
                 {
                     return new DownloadResult
@@ -83,7 +91,7 @@ namespace Tiver.Fowl.Drivers.DriverDownloaders
             }
         }
 
-        private Uri GetLinkForVersion(string versionNumber)
+        private Uri GetLinkForVersion(string versionNumber, string platform)
         {
             var keys = new List<string>();
 
@@ -102,7 +110,7 @@ namespace Tiver.Fowl.Drivers.DriverDownloaders
                 keys.AddRange(from XmlNode node in nodes select node.InnerText);
             }
 
-            var query = keys.SingleOrDefault(k => k.StartsWith($"{versionNumber}/") && k.EndsWith("win32.zip"));
+            var query = keys.SingleOrDefault(k => k.StartsWith($"{versionNumber}/") && k.EndsWith($"{platform}.zip"));
 
             return query == null
                 ? null

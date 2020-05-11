@@ -38,7 +38,7 @@ namespace Tiver.Fowl.Drivers.TestsWithoutConfigFile
         {
             var downloader = new ChromeDriverDownloader();
             const string versionNumber = "2.9";
-            var result = downloader.DownloadBinary(versionNumber);
+            var result = downloader.DownloadBinary(versionNumber, "win32");
             Assert.IsTrue(result.Successful);
             Assert.AreEqual(DownloaderAction.BinaryDownloaded, result.PerformedAction);
             Assert.IsNull(result.ErrorMessage);

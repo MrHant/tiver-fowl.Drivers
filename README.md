@@ -15,7 +15,7 @@ Download WebDriver drivers' binaries from official sources
 ### Download chrome driver of specific version
 
 ```c#
-var result = new ChromeDriverDownloader().DownloadBinary("76.0.3809.25");
+var result = new ChromeDriverDownloader().DownloadBinary("76.0.3809.25", "win32");
 ```
 
 ### Download configured "chrome" driver
@@ -36,11 +36,12 @@ Configuration is stored in file `Tiver_config.json`
 {
   "Tiver.Fowl.Drivers": {
     "HttpTimeout": 120,
-    "Instances": [
+    "Drivers": [
       {
         "Name": "chrome",
         "DownloaderType": "ChromeDriverDownloader",
-        "Version": "76.0.3809.25"
+        "Version": "76.0.3809.25",
+        "Platform": "win32"
       }
     ]
   }

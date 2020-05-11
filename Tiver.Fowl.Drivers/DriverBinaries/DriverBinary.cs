@@ -3,9 +3,14 @@ using Tiver.Fowl.Drivers.Configuration;
 
 namespace Tiver.Fowl.Drivers.DriverBinaries
 {
-    public class ChromeDriverBinary : IDriverBinary
+    public class DriverBinary : IDriverBinary
     {
-        public string DriverBinaryFilename => "chromedriver.exe";
+        public DriverBinary(string driverBinaryFilename)
+        {
+            DriverBinaryFilename = driverBinaryFilename;
+        }
+
+        public string DriverBinaryFilename { get; private set; }
 
         public bool CheckBinaryExists()
         {
@@ -14,16 +19,13 @@ namespace Tiver.Fowl.Drivers.DriverBinaries
 
         public string GetExistingBinaryVersion()
         {
-            var versionFilepath = DriverBinaryVersionFilepath;
-            if (!File.Exists(versionFilepath))
+            if (!File.Exists(DriverBinaryVersionFilepath))
             {
                 return null;
             }
 
-            using (var stream = File.OpenText(versionFilepath))
-            {
-                return stream.ReadToEnd();
-            }
+            using var stream = File.OpenText(DriverBinaryVersionFilepath);
+            return stream.ReadToEnd();
         }
 
         public void RemoveBinaryFiles()

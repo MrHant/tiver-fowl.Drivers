@@ -10,26 +10,30 @@ namespace Tiver.Fowl.Drivers
         public static IDriverDownloader Get(string name)
         {
             var driverConfig = GetDriverConfiguration(name);
-            var downloader = (IDriverDownloader)Activator.CreateInstance(
-                    "Tiver.Fowl.Drivers", 
-                    $"Tiver.Fowl.Drivers.DriverDownloaders.{driverConfig.DownloaderType}")
-                    .Unwrap();
+            var downloader = GetDownloader(driverConfig);
             return downloader;
         }
-        
+
         public static DownloadResult DownloadBinaryFor(string name)
         {
             var driverConfig = GetDriverConfiguration(name);
-            var downloader = (IDriverDownloader)Activator.CreateInstance(
-                    "Tiver.Fowl.Drivers", 
-                    $"Tiver.Fowl.Drivers.DriverDownloaders.{driverConfig.DownloaderType}")
-                .Unwrap();
-            return downloader.DownloadBinary(driverConfig.Version);
+            var downloader = GetDownloader(driverConfig);
+            return downloader.DownloadBinary(driverConfig.Version, driverConfig.Platform);
+        }
+
+        private static IDriverDownloader GetDownloader(DriverElement driverConfig)
+        {
+            var downloader =
+                (IDriverDownloader) Activator.CreateInstance(
+                        "Tiver.Fowl.Drivers",
+                        $"Tiver.Fowl.Drivers.DriverDownloaders.{driverConfig.DownloaderType}")
+                    .Unwrap();
+            return downloader;
         }
 
         private static DriverElement GetDriverConfiguration(string name)
         {
-            return Context.Configuration.Instances.Single(i => i.Name.Equals(name));
+            return Context.Configuration.Drivers.Single(i => i.Name.Equals(name));
         }
     }
 }
