@@ -11,7 +11,7 @@ namespace Tiver.Fowl.Drivers.DriverDownloaders
 {
     public class ChromeDriverDownloader : IDriverDownloader
     {
-        public IDriverBinary Binary => new ChromeDriverBinary();
+        public IDriverBinary Binary => new DriverBinary("chromedriver.exe");
         public Uri LinkForDownloadsPage => new Uri("http://chromedriver.storage.googleapis.com/");
 
         public DownloadResult DownloadBinary(string versionNumber)
