@@ -1,22 +1,22 @@
 ﻿namespace Tiver.Fowl.Drivers.Configuration
 {
-    public interface IDriversConfiguration
+    public class DriversConfiguration
     {
         /// <summary>
         /// Location for binaries to be saved
         /// If null - defaults to assembly location
         /// </summary>
-        string DownloadLocation { get; }
+        public string DownloadLocation { get; set; }
 
         /// <summary>
         /// Configured driver instances
         /// </summary>
-        DriverCollection Instances { get; }
+        public DriverElement[] Instances { get; set; }
         
         /// <summary>
         /// Timeout to be used for HTTP requests
         /// Value in seconds
         /// </summary>
-        int HttpTimeout { get; }
+        public int HttpTimeout { get; set; }
     }
 }
