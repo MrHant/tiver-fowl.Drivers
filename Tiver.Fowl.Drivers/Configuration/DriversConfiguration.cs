@@ -5,8 +5,6 @@ namespace Tiver.Fowl.Drivers.Configuration
 {
     public class DriversConfiguration
     {
-        private string _downloadLocation;
-
         /// <summary>
         /// Location for binaries to be saved
         /// Defaults to assembly location
