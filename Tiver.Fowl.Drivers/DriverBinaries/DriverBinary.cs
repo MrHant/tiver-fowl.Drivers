@@ -35,6 +35,6 @@ namespace Tiver.Fowl.Drivers.DriverBinaries
         }
 
         private string DriverBinaryFilepath => Path.Combine(Context.Configuration.DownloadLocation, DriverBinaryFilename);
-        private string DriverBinaryVersionFilepath => Path.Combine(Context.Configuration.DownloadLocation, $"{DriverBinaryFilename}.version");
+        public string DriverBinaryVersionFilepath => Path.Combine(Context.Configuration.DownloadLocation, $"{DriverBinaryFilename}.version");
     }
 }

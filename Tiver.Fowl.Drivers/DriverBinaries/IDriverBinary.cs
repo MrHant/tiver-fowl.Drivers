@@ -3,6 +3,7 @@
     public interface IDriverBinary
     {
         string DriverBinaryFilename { get; }
+        string DriverBinaryVersionFilepath { get; }
 
         /// <summary>
         /// Checks whether binary exists

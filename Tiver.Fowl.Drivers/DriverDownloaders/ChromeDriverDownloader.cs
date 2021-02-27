@@ -127,7 +127,7 @@ namespace Tiver.Fowl.Drivers.DriverDownloaders
 
                 ZipFile.ExtractToDirectory(tempFile, Context.Configuration.DownloadLocation);
                 File.Delete(tempFile);
-                var versionFilePath = Path.Combine(Context.Configuration.DownloadLocation, $"{Binary.DriverBinaryFilename}.version");
+                var versionFilePath = Binary.DriverBinaryVersionFilepath;
                 File.WriteAllText(versionFilePath, versionNumber);
                 return new DownloadResult
                 {
