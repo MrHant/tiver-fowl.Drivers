@@ -7,11 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tiver.Fowl.Drivers", "Tiver
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tiver.Fowl.Drivers.Tests", "Tiver.Fowl.Drivers.Tests\Tiver.Fowl.Drivers.Tests.csproj", "{D8CB72DC-6E92-41D7-8E5B-5FC1B02E21C5}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "package", "package", "{CEDA36D1-9F72-4B83-A01F-A0F647839867}"
-	ProjectSection(SolutionItems) = preProject
-		package\Package.nuspec = package\Package.nuspec
-	EndProjectSection
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C1C78501-13B6-4682-8B2B-BEC71459942B}"
 	ProjectSection(SolutionItems) = preProject
 		build.cake = build.cake
@@ -19,12 +14,16 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tiver.Fowl.Drivers.TestsWithoutConfigFile", "Tiver.Fowl.Drivers.TestsWithoutConfigFile\Tiver.Fowl.Drivers.TestsWithoutConfigFile.csproj", "{A1B56599-30BF-4B79-B4FF-3A74BBE3A0B0}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "_build", "build\_build.csproj", "{5BBE1432-0C92-4EB2-8568-0776787ECBC7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5BBE1432-0C92-4EB2-8568-0776787ECBC7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5BBE1432-0C92-4EB2-8568-0776787ECBC7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6F6D255F-0B9D-459A-9668-9B6931BEDD0E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6F6D255F-0B9D-459A-9668-9B6931BEDD0E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6F6D255F-0B9D-459A-9668-9B6931BEDD0E}.Release|Any CPU.ActiveCfg = Release|Any CPU
