@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Threading;
 using System.Xml;
 using Tiver.Fowl.Drivers.DriverBinaries;
 
@@ -61,6 +62,15 @@ namespace Tiver.Fowl.Drivers.DriverDownloaders
                     Successful = false,
                     ErrorMessage = message
                 };
+            }
+
+            const int maxLockWaitingAttempts = 20;
+            var lockWaitingAttempts = 0;
+
+            while (Binary.CheckBinaryLocked() && lockWaitingAttempts < maxLockWaitingAttempts)
+            {
+                Thread.Sleep(TimeSpan.FromSeconds(5));
+                lockWaitingAttempts++;
             }
             
             if (Binary.CheckBinaryExists())
@@ -121,6 +131,7 @@ namespace Tiver.Fowl.Drivers.DriverDownloaders
         {
             try
             {
+                Binary.AcquireBinaryLock();
                 var bytes = Context.HttpClient.GetByteArrayAsync(downloadLink).Result;
                 var tempFile = Path.GetTempFileName();
                 File.WriteAllBytes(tempFile, bytes);
@@ -143,6 +154,10 @@ namespace Tiver.Fowl.Drivers.DriverDownloaders
                     Successful = false,
                     ErrorMessage = message
                 };
+            }
+            finally
+            {
+                Binary.ReleaseBinaryLock();
             }
         }
 

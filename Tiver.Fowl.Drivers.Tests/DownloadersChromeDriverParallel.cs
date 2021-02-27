@@ -8,7 +8,7 @@ using Tiver.Fowl.Drivers.DriverDownloaders;
 namespace Tiver.Fowl.Drivers.Tests
 {
     [TestFixture]
-    public class DownloadersParallel
+    public class DownloadersChromeDriverParallel
     {
         private static DriversConfiguration Config
         {
@@ -73,7 +73,7 @@ namespace Tiver.Fowl.Drivers.Tests
             const string versionNumber = "76.0.3809.25";
             var result = downloader.DownloadBinary(versionNumber, "win32");
             Assert.IsTrue(result.Successful, $"Reported error message:{result.ErrorMessage}");
-            Assert.AreEqual(DownloaderAction.BinaryDownloaded, result.PerformedAction);
+            Assert.IsTrue(result.PerformedAction == DownloaderAction.BinaryDownloaded || result.PerformedAction == DownloaderAction.NoDownloadNeeded);
             Assert.IsNull(result.ErrorMessage);
             var exists = File.Exists(DriverFilepath("win32"));
             Assert.IsTrue(exists);

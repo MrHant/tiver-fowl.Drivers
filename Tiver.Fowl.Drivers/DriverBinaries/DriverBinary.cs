@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using Tiver.Fowl.Drivers.Configuration;
 
 namespace Tiver.Fowl.Drivers.DriverBinaries
@@ -15,6 +16,21 @@ namespace Tiver.Fowl.Drivers.DriverBinaries
         public bool CheckBinaryExists()
         {
             return File.Exists(DriverBinaryFilepath);
+        }
+
+        public bool CheckBinaryLocked()
+        {
+            return File.Exists(DriverBinaryLockFilepath);
+        }
+
+        public void AcquireBinaryLock()
+        {
+            File.WriteAllText(DriverBinaryLockFilepath, DateTime.UtcNow.ToString("O"));
+        }
+
+        public void ReleaseBinaryLock()
+        {
+            File.Delete(DriverBinaryLockFilepath);
         }
 
         public string GetExistingBinaryVersion()
@@ -36,5 +52,6 @@ namespace Tiver.Fowl.Drivers.DriverBinaries
 
         private string DriverBinaryFilepath => Path.Combine(Context.Configuration.DownloadLocation, DriverBinaryFilename);
         public string DriverBinaryVersionFilepath => Path.Combine(Context.Configuration.DownloadLocation, $"{DriverBinaryFilename}.version");
+        public string DriverBinaryLockFilepath => Path.Combine(Context.Configuration.DownloadLocation, $"{DriverBinaryFilename}.lock");
     }
 }
