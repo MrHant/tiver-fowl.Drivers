@@ -32,11 +32,23 @@ var result = new ChromeDriverDownloader().DownloadBinary("76.0.3809.25", "win32"
 var result = Downloaders.DownloadBinaryFor("chrome");
 ```
 
-## Sample configuration
+## Configuration
 
-Configuration is stored in file `Tiver_config.json`
+Configuration is stored in file `Tiver_config.json`. 
 
-### Config for ChromeDriver v76.0.3809.25
+Top-level element is an object with key "Tiver.Fowl.Drivers".
+
+### Config values:
+
+* **HttpTimeout** - maximum time for HTTP requests, in seconds. Default value - 120 seconds.
+* **DownloadLocation** - location which would be used to store downloaded drivers. Default value - location of executing assembly
+* **Drivers** - array of drivers configurations
+  * **Name** - reference name for driver configuration
+  * **DownloaderType** - which downloader to use
+  * **Version** - required version of driver
+  * **Platform** - required platform of driver
+
+### Sample config for ChromeDriver v76.0.3809.25
 
 ```json
 {
