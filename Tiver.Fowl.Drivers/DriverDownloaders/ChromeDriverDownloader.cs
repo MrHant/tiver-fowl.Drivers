@@ -67,7 +67,7 @@ namespace Tiver.Fowl.Drivers.DriverDownloaders
             using var mutex = new Mutex(false, "Global\\ChromeDriverDownloader");
             try
             {
-                mutex.WaitOne(90 * 1000);
+                mutex.WaitOne(TimeSpan.FromSeconds(Context.Configuration.HttpTimeout + 10));
                 if (Binary.CheckBinaryExists())
                 {
                     if (Binary.GetExistingBinaryVersion().Equals(versionNumber))
