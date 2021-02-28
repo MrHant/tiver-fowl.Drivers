@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Configuration;
 using NUnit.Framework;
 using Tiver.Fowl.Drivers.Configuration;
-using Tiver.Fowl.Drivers.DriverBinaries;
 using Tiver.Fowl.Drivers.DriverDownloaders;
 
 namespace Tiver.Fowl.Drivers.Tests
