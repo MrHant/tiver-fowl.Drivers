@@ -1,5 +1,4 @@
 ﻿using System.IO;
-using Tiver.Fowl.Drivers.Configuration;
 
 namespace Tiver.Fowl.Drivers.DriverBinaries
 {
@@ -35,6 +34,7 @@ namespace Tiver.Fowl.Drivers.DriverBinaries
         }
 
         private string DriverBinaryFilepath => Path.Combine(Context.Configuration.DownloadLocation, DriverBinaryFilename);
-        private string DriverBinaryVersionFilepath => Path.Combine(Context.Configuration.DownloadLocation, $"{DriverBinaryFilename}.version");
+        public string DriverBinaryVersionFilepath => Path.Combine(Context.Configuration.DownloadLocation, $"{DriverBinaryFilename}.version");
+        public string DriverBinaryLockFilepath => Path.Combine(Context.Configuration.DownloadLocation, $"{DriverBinaryFilename}.lock");
     }
 }

@@ -20,6 +20,6 @@ namespace Tiver.Fowl.Drivers.Configuration
         /// Timeout to be used for HTTP requests
         /// Value in seconds
         /// </summary>
-        public int HttpTimeout { get; set; } = 100;
+        public int HttpTimeout { get; set; } = 120;
     }
 }

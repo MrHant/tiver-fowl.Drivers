@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Threading;
 using System.Xml;
 using Tiver.Fowl.Drivers.DriverBinaries;
 
@@ -62,32 +63,50 @@ namespace Tiver.Fowl.Drivers.DriverDownloaders
                     ErrorMessage = message
                 };
             }
-            
-            if (Binary.CheckBinaryExists())
+
+            using var mutex = new Mutex(false, "Global\\ChromeDriverDownloader");
+            try
             {
-                if (Binary.GetExistingBinaryVersion().Equals(versionNumber))
+                mutex.WaitOne(TimeSpan.FromSeconds(Context.Configuration.HttpTimeout + 10));
+                if (Binary.CheckBinaryExists())
                 {
-                    return new DownloadResult
+                    if (Binary.GetExistingBinaryVersion().Equals(versionNumber))
                     {
-                        Successful = true,
-                        PerformedAction = DownloaderAction.NoDownloadNeeded
-                    };
+                        return new DownloadResult
+                        {
+                            Successful = true,
+                            PerformedAction = DownloaderAction.NoDownloadNeeded
+                        };
+                    }
+                    else
+                    {
+                        Binary.RemoveBinaryFiles();
+                        var result = DownloadBinary(uri, versionNumber);
+                        if (result.Successful)
+                        {
+                            result.PerformedAction = DownloaderAction.BinaryUpdated;
+                        }
+
+                        return result;
+                    }
                 }
                 else
                 {
-                    Binary.RemoveBinaryFiles();
-                    var result = DownloadBinary(uri, versionNumber);
-                    if (result.Successful)
-                    {
-                        result.PerformedAction = DownloaderAction.BinaryUpdated;
-                    }
-
-                    return result;
+                    return DownloadBinary(uri, versionNumber);
                 }
             }
-            else
+            catch (Exception ex)
             {
-                return DownloadBinary(uri, versionNumber);
+                var message = ex.GetAllExceptionsMessages();
+                return new DownloadResult
+                {
+                    Successful = false,
+                    ErrorMessage = message
+                };
+            }
+            finally
+            {
+                mutex.ReleaseMutex();
             }
         }
 
@@ -127,7 +146,7 @@ namespace Tiver.Fowl.Drivers.DriverDownloaders
 
                 ZipFile.ExtractToDirectory(tempFile, Context.Configuration.DownloadLocation);
                 File.Delete(tempFile);
-                var versionFilePath = Path.Combine(Context.Configuration.DownloadLocation, $"{Binary.DriverBinaryFilename}.version");
+                var versionFilePath = Binary.DriverBinaryVersionFilepath;
                 File.WriteAllText(versionFilePath, versionNumber);
                 return new DownloadResult
                 {
