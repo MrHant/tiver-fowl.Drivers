@@ -96,6 +96,7 @@ class Build : NukeBuild
                 .SetVersion(GitVersion.NuGetVersionV2)
                 .SetAuthors("Artsiomi Silivonchyk")
                 .SetProperty("PackageLicenseExpression", "MIT")
+                .SetProperty("PackageReadmeFile", "README.md")
                 .DisablePackageRequireLicenseAcceptance()
                 .SetPackageProjectUrl("https://github.com/MrHant/tiver-fowl.Drivers")
                 .SetDescription("Configurable WebDriver downloaders.")
