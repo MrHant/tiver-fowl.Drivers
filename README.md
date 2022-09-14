@@ -17,7 +17,7 @@ Download WebDriver drivers' binaries from official sources
 
 ### .NET support
 * Package is targeting .NET 6 and .NET Standard 2.0
-* Tests executed on .NET 6, .NET 5, .NET Framework 4.8, .NET Framework 4.7.2, .NET Framework 4.6.2
+* Tests executed on .NET 6, .NET Framework 4.8, .NET Framework 4.7.2, .NET Framework 4.6.2
 
 ## Downloaders
 * ChromeDriverDownloader - downloads binaries from http://chromedriver.storage.googleapis.com/
