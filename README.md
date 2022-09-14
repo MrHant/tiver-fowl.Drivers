@@ -15,9 +15,14 @@ Download WebDriver drivers' binaries from official sources
 * Add downloaders configuration to ```app.config``` file. Sample configuration can be found below
 * Add calls to execute downloaders. Sample usage can be found below
 
+### .NET support
+* Package is targeting .NET 6 and .NET Standard 2.0
+* Tests executed on .NET 6, .NET 5, .NET Framework 4.8, .NET Framework 4.7.2, .NET Framework 4.6.2
+
 ## Downloaders
 * ChromeDriverDownloader - downloads binaries from http://chromedriver.storage.googleapis.com/
   * ```LATEST_RELEASE``` version can be used to download latest driver version
+  * ```LATEST_RELEASE_XXX``` version can be used to download latest driver with version XXX
 
 ## Sample usage
 ### Download chrome driver of specific version

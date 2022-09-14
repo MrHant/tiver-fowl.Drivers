@@ -23,11 +23,9 @@ namespace Tiver.Fowl.Drivers
 
         private static IDriverDownloader GetDownloader(DriverElement driverConfig)
         {
-            var downloader =
-                (IDriverDownloader) Activator.CreateInstance(
-                        "Tiver.Fowl.Drivers",
-                        $"Tiver.Fowl.Drivers.DriverDownloaders.{driverConfig.DownloaderType}")
-                    .Unwrap();
+            var typeName = $"Tiver.Fowl.Drivers.DriverDownloaders.{driverConfig.DownloaderType}";
+            var type = Type.GetType(typeName) ?? throw new TypeLoadException($"Can't create instance of type '{typeName}'");
+            var downloader = (IDriverDownloader)Activator.CreateInstance(type);
             return downloader;
         }
 
