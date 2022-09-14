@@ -22,6 +22,7 @@ Download WebDriver drivers' binaries from official sources
 ## Downloaders
 * ChromeDriverDownloader - downloads binaries from http://chromedriver.storage.googleapis.com/
   * ```LATEST_RELEASE``` version can be used to download latest driver version
+  * ```LATEST_RELEASE_XXX``` version can be used to download latest driver with version XXX
 
 ## Sample usage
 ### Download chrome driver of specific version
