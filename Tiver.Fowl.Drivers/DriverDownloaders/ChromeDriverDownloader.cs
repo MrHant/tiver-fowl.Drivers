@@ -17,7 +17,7 @@ namespace Tiver.Fowl.Drivers.DriverDownloaders
 
         public DownloadResult DownloadBinary(string versionNumber, string platform)
         {
-            if (versionNumber.Equals("LATEST_RELEASE"))
+            if (versionNumber.StartsWith("LATEST_RELEASE"))
             {
                 try
                 {

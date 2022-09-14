@@ -125,6 +125,21 @@ namespace Tiver.Fowl.Drivers.Tests
         }
         
         [Test]
+        public void Download_Latest_Release_v97([ValueSource(nameof(Platforms))]string platform)
+        {
+            var downloader = new ChromeDriverDownloader();
+            var result = downloader.DownloadBinary("LATEST_RELEASE_97", platform);
+            Assert.IsTrue(result.Successful, $"Reported error message:{result.ErrorMessage}");
+            Assert.AreEqual(DownloaderAction.BinaryDownloaded, result.PerformedAction);
+            Assert.IsNull(result.ErrorMessage);
+            var exists = File.Exists(DriverFilepath(platform));
+            Assert.IsTrue(exists);
+            exists = downloader.Binary.CheckBinaryExists();
+            Assert.IsTrue(exists);
+            Assert.IsNotNull(downloader.Binary.GetExistingBinaryVersion());
+        }
+        
+        [Test]
         public void DownloadTwoTimes([ValueSource(nameof(Platforms))]string platform)
         {
             var downloader = new ChromeDriverDownloader();
