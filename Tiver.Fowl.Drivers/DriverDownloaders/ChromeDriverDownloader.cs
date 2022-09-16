@@ -21,7 +21,7 @@ namespace Tiver.Fowl.Drivers.DriverDownloaders
             {
                 try
                 {
-                    versionNumber = GetLatestVersion();
+                    versionNumber = GetLatestVersion(versionNumber);
                 }
                 catch (Exception ex)
                 {
@@ -165,9 +165,9 @@ namespace Tiver.Fowl.Drivers.DriverDownloaders
             }
         }
 
-        private string GetLatestVersion()
+        private string GetLatestVersion(string version)
         {
-            var linkForLatestReleaseFile = new Uri(LinkForDownloadsPage, "LATEST_RELEASE");
+            var linkForLatestReleaseFile = new Uri(LinkForDownloadsPage, version);
 
             using (var response = Context.HttpClient.GetAsync(linkForLatestReleaseFile).Result)
             using (var content = response.Content)

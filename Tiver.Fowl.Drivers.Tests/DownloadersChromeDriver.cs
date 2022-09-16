@@ -200,5 +200,32 @@ namespace Tiver.Fowl.Drivers.Tests
             Assert.IsTrue(exists);
             Assert.AreEqual(versionNumber, downloader.Binary.GetExistingBinaryVersion());
         }
+        
+        [Test]
+        public void DownloadDifferentVersionUsingLatest([ValueSource(nameof(Platforms))]string platform)
+        {
+            var downloader = new ChromeDriverDownloader();
+            var versionNumber = "LATEST_RELEASE_103";
+            var result = downloader.DownloadBinary(versionNumber, platform);
+            Assert.IsTrue(result.Successful, $"Reported error message:{result.ErrorMessage}");
+            Assert.AreEqual(DownloaderAction.BinaryDownloaded, result.PerformedAction);
+            Assert.IsNull(result.ErrorMessage);
+            var exists = File.Exists(DriverFilepath(platform));
+            Assert.IsTrue(exists);
+            exists = downloader.Binary.CheckBinaryExists();
+            Assert.IsTrue(exists);
+            Assert.IsTrue(downloader.Binary.GetExistingBinaryVersion().StartsWith("103"));
+            
+            versionNumber = "LATEST_RELEASE_102";
+            result = downloader.DownloadBinary(versionNumber, platform);
+            Assert.IsTrue(result.Successful, $"Reported error message:{result.ErrorMessage}");
+            Assert.AreEqual(DownloaderAction.BinaryUpdated, result.PerformedAction);
+            Assert.IsNull(result.ErrorMessage);
+            exists = File.Exists(DriverFilepath(platform));
+            Assert.IsTrue(exists);
+            exists = downloader.Binary.CheckBinaryExists();
+            Assert.IsTrue(exists);
+            Assert.IsTrue(downloader.Binary.GetExistingBinaryVersion().StartsWith("102"));
+        }
     }
 }
