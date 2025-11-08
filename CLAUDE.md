@@ -26,13 +26,7 @@ dotnet build Tiver.Fowl.Drivers.sln --configuration Release
 # Run tests
 dotnet test Tiver.Fowl.Drivers.sln --configuration Debug
 
-# Create NuGet package
-# MinVer automatically sets the package version
-dotnet pack Tiver.Fowl.Drivers.sln --configuration Release --output artifacts
 
-# Push to NuGet (requires NUGET_API_KEY environment variable)
-dotnet nuget push artifacts/*.nupkg --source https://api.nuget.org/v3/index.json --api-key $NUGET_API_KEY
-```
 
 ### Running Tests
 
@@ -220,12 +214,18 @@ To add support for a new WebDriver (e.g., GeckoDriver):
 **Testing:**
 - NUnit (v3.13.2) - Test framework
 - NUnit3TestAdapter (v4.2.0) - Test runner
-- Appveyor.TestLogger (v2.0.0) - CI integration
 
 ## CI/CD
 
-- **Platform**: AppVeyor
-- **Configuration**: `appveyor.yml`
-- **Build Image**: Visual Studio 2019
-- **Targets**: Test, Push (on successful build)
-- **Artifacts**: NuGet packages (.nupkg) and symbols (.snupkg)
+- **Platform**: GitHub Actions
+- **Configuration**: `.github/workflows/dotnet.yml`
+- **Runner**: Windows Latest
+- **Triggers**: Push to master/develop branches
+- **Workflow Steps**:
+  - Test (net6.0 framework only, Release configuration)
+  - Pack NuGet package
+  - NuGet OIDC authentication
+  - Publish to NuGet (with --skip-duplicate)
+- **Authentication**: Uses NuGet OIDC login (requires GitHub OIDC trust relationship)
+- **Secrets Required**: `NUGET_USER` (NuGet account username for OIDC authentication)
+- **Permissions**: `id-token: write`, `contents: read` (for OIDC)

@@ -7,8 +7,8 @@ Download WebDriver drivers' binaries from official sources
 
 | Branch | Package | CI  |
 | ------ | ------- | --- |
-| master (stable) | [![NuGet](https://img.shields.io/nuget/v/Tiver.Fowl.Drivers.svg)](https://www.nuget.org/packages/Tiver.Fowl.Drivers) | [![Build status](https://ci.appveyor.com/api/projects/status/s6xak6m2jc2mijnt/branch/master?svg=true)](https://ci.appveyor.com/project/MrHant/tiver-fowl-drivers/branch/master) |
-| develop | [![NuGet Pre Release](https://img.shields.io/nuget/vpre/Tiver.Fowl.Drivers.svg)](https://www.nuget.org/packages/Tiver.Fowl.Drivers/absoluteLatest) | [![Build status](https://ci.appveyor.com/api/projects/status/s6xak6m2jc2mijnt/branch/develop?svg=true)](https://ci.appveyor.com/project/MrHant/tiver-fowl-drivers/branch/develop) |
+| master (stable) | [![NuGet](https://img.shields.io/nuget/v/Tiver.Fowl.Drivers.svg)](https://www.nuget.org/packages/Tiver.Fowl.Drivers) | xxx |
+| develop | [![NuGet Pre Release](https://img.shields.io/nuget/vpre/Tiver.Fowl.Drivers.svg)](https://www.nuget.org/packages/Tiver.Fowl.Drivers/absoluteLatest) | xxx |
 
 ## Installation
 * Add ```Tiver.Fowl.Drivers``` nuget package to solution
@@ -17,7 +17,7 @@ Download WebDriver drivers' binaries from official sources
 
 ### .NET support
 * Package is targeting .NET 6 and .NET Standard 2.0
-* Tests executed on .NET 6, .NET Framework 4.8, .NET Framework 4.7.2, .NET Framework 4.6.2
+* Tests executed on .NET 6
 
 ## Downloaders
 * ChromeDriverDownloader - downloads binaries from http://chromedriver.storage.googleapis.com/
