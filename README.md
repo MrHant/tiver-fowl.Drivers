@@ -1,5 +1,4 @@
-# tiver-fowl.Drivers ![.NET](https://img.shields.io/badge/.NET-6-blue)  [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/MrHant/tiver-fowl/master/LICENSE) [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FMrHant%2Ftiver-fowl.Drivers.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FMrHant%2Ftiver-fowl.Drivers?ref=badge_shield)
-
+# tiver-fowl.Drivers ![.NET](https://img.shields.io/badge/.NET-6-blue) 
 
 Download WebDriver drivers' binaries from official sources
 
@@ -7,8 +6,8 @@ Download WebDriver drivers' binaries from official sources
 
 | Branch | Package | CI  |
 | ------ | ------- | --- |
-| master (stable) | [![NuGet](https://img.shields.io/nuget/v/Tiver.Fowl.Drivers.svg)](https://www.nuget.org/packages/Tiver.Fowl.Drivers) | xxx |
-| develop | [![NuGet Pre Release](https://img.shields.io/nuget/vpre/Tiver.Fowl.Drivers.svg)](https://www.nuget.org/packages/Tiver.Fowl.Drivers/absoluteLatest) | xxx |
+| master (stable) | [![NuGet](https://img.shields.io/nuget/v/Tiver.Fowl.Drivers.svg)](https://www.nuget.org/packages/Tiver.Fowl.Drivers) | [![Test & Publish NuGet package](https://github.com/MrHant/tiver-fowl.Drivers/actions/workflows/dotnet.yml/badge.svg?branch=master)](https://github.com/MrHant/tiver-fowl.Drivers/actions/workflows/dotnet.yml) |
+| develop | [![NuGet Pre Release](https://img.shields.io/nuget/vpre/Tiver.Fowl.Drivers.svg)](https://www.nuget.org/packages/Tiver.Fowl.Drivers/absoluteLatest) | [![Test & Publish NuGet package](https://github.com/MrHant/tiver-fowl.Drivers/actions/workflows/dotnet.yml/badge.svg?branch=develop)](https://github.com/MrHant/tiver-fowl.Drivers/actions/workflows/dotnet.yml) |
 
 ## Installation
 * Add ```Tiver.Fowl.Drivers``` nuget package to solution
