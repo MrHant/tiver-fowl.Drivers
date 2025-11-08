@@ -8,34 +8,40 @@ This is a .NET library that downloads WebDriver driver binaries (e.g., ChromeDri
 
 ## Build Commands
 
-This project uses **Nuke.Build** for automation. All build commands are executed via wrapper scripts:
+This project uses standard `dotnet` CLI commands directly. GitVersion is installed as a local dotnet tool for versioning.
+
+### Basic Build Commands
 
 ```bash
-# Linux/macOS
-./build.sh [target]
+# Restore dotnet tools (GitVersion)
+dotnet tool restore
 
-# Windows
-build.cmd [target]
-build.ps1 [target]
+# Restore dependencies
+dotnet restore Tiver.Fowl.Drivers.sln
+
+# Build the solution
+dotnet build Tiver.Fowl.Drivers.sln --configuration Debug
+
+# Build with GitVersion (as done in CI)
+dotnet build Tiver.Fowl.Drivers.sln --configuration Release \
+  /p:AssemblyVersion=$(dotnet dotnet-gitversion /showvariable AssemblySemVer) \
+  /p:FileVersion=$(dotnet dotnet-gitversion /showvariable AssemblySemFileVer) \
+  /p:InformationalVersion=$(dotnet dotnet-gitversion /showvariable InformationalVersion)
+
+# Run tests
+dotnet test Tiver.Fowl.Drivers.sln --configuration Debug
+
+# Create NuGet package
+dotnet pack Tiver.Fowl.Drivers.sln --configuration Release --output artifacts \
+  /p:PackageVersion=$(dotnet dotnet-gitversion /showvariable NuGetVersionV2)
+
+# Push to NuGet (requires NUGET_API_KEY environment variable)
+dotnet nuget push artifacts/*.nupkg --source https://api.nuget.org/v3/index.json --api-key $NUGET_API_KEY
 ```
-
-### Build Targets
-
-- `./build.sh` - Default target is `Compile`
-- `./build.sh Clean` - Clean artifacts directory
-- `./build.sh Restore` - Restore NuGet dependencies
-- `./build.sh Compile` - Build solution (depends on Restore)
-- `./build.sh Test` - Run all tests (depends on Compile)
-- `./build.sh Pack` - Create NuGet package (depends on Test, Clean, Compile)
-- `./build.sh Push` - Push package to NuGet (requires API key, Release mode only)
 
 ### Running Tests
 
 ```bash
-# Run all tests
-./build.sh Test
-
-# Or use dotnet directly
 dotnet test Tiver.Fowl.Drivers.sln
 ```
 
@@ -146,8 +152,8 @@ Tiver.Fowl.Drivers.Tests/            # Integration tests with config
 Tiver.Fowl.Drivers.TestsWithoutConfigFile/ # Tests without config
 └── DownloadersChromeDriverWithoutConfigFile.cs
 
-build/
-└── Build.cs                          # Nuke.Build targets
+.config/
+└── dotnet-tools.json                 # Local dotnet tools manifest (GitVersion)
 ```
 
 ## Adding a New Downloader
@@ -176,7 +182,8 @@ To add support for a new WebDriver (e.g., GeckoDriver):
 
 - **GitVersion**: Automatic semantic versioning based on git history and tags
 - **Configuration**: `GitVersion.yml` in root directory
-- **Build Integration**: Version is set during `Compile` target via `SetAssemblyVersion(GitVersion.AssemblySemVer)`
+- **Tool Installation**: GitVersion is installed as a local dotnet tool (see `.config/dotnet-tools.json`)
+- **Build Integration**: Version is automatically applied during build via MSBuild properties (`AssemblyVersion`, `FileVersion`, `InformationalVersion`, `PackageVersion`)
 
 ## Test Patterns
 
@@ -213,9 +220,8 @@ To add support for a new WebDriver (e.g., GeckoDriver):
 - Microsoft.Extensions.Configuration.Binder (v6.0.0) - Config binding
 - Microsoft.Extensions.Configuration.Json (v6.0.0) - JSON provider
 
-**Build:**
-- Nuke.Common (v6.0.1) - Build automation
-- GitVersion (net5.0 framework) - Semantic versioning
+**Build Tools:**
+- GitVersion.Tool (v5.8.1) - Semantic versioning (installed as local dotnet tool)
 
 **Testing:**
 - NUnit (v3.13.2) - Test framework
