@@ -2,11 +2,5 @@
   "version": 1,
   "isRoot": true,
   "tools": {
-    "gitversion.tool": {
-      "version": "5.8.1",
-      "commands": [
-        "dotnet-gitversion"
-      ]
-    }
   }
 }

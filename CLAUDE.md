@@ -8,32 +8,27 @@ This is a .NET library that downloads WebDriver driver binaries (e.g., ChromeDri
 
 ## Build Commands
 
-This project uses standard `dotnet` CLI commands directly. GitVersion is installed as a local dotnet tool for versioning.
+This project uses standard `dotnet` CLI commands directly. MinVer is used for automatic semantic versioning based on git tags.
 
 ### Basic Build Commands
 
 ```bash
-# Restore dotnet tools (GitVersion)
-dotnet tool restore
-
 # Restore dependencies
 dotnet restore Tiver.Fowl.Drivers.sln
 
-# Build the solution
+# Build the solution (Debug)
 dotnet build Tiver.Fowl.Drivers.sln --configuration Debug
 
-# Build with GitVersion (as done in CI)
-dotnet build Tiver.Fowl.Drivers.sln --configuration Release \
-  /p:AssemblyVersion=$(dotnet dotnet-gitversion /showvariable AssemblySemVer) \
-  /p:FileVersion=$(dotnet dotnet-gitversion /showvariable AssemblySemFileVer) \
-  /p:InformationalVersion=$(dotnet dotnet-gitversion /showvariable InformationalVersion)
+# Build the solution (Release, as done in CI)
+# MinVer automatically determines version from git tags
+dotnet build Tiver.Fowl.Drivers.sln --configuration Release
 
 # Run tests
 dotnet test Tiver.Fowl.Drivers.sln --configuration Debug
 
 # Create NuGet package
-dotnet pack Tiver.Fowl.Drivers.sln --configuration Release --output artifacts \
-  /p:PackageVersion=$(dotnet dotnet-gitversion /showvariable NuGetVersionV2)
+# MinVer automatically sets the package version
+dotnet pack Tiver.Fowl.Drivers.sln --configuration Release --output artifacts
 
 # Push to NuGet (requires NUGET_API_KEY environment variable)
 dotnet nuget push artifacts/*.nupkg --source https://api.nuget.org/v3/index.json --api-key $NUGET_API_KEY
@@ -153,7 +148,7 @@ Tiver.Fowl.Drivers.TestsWithoutConfigFile/ # Tests without config
 └── DownloadersChromeDriverWithoutConfigFile.cs
 
 .config/
-└── dotnet-tools.json                 # Local dotnet tools manifest (GitVersion)
+└── dotnet-tools.json                 # Local dotnet tools manifest
 ```
 
 ## Adding a New Downloader
@@ -180,10 +175,11 @@ To add support for a new WebDriver (e.g., GeckoDriver):
 
 ## Version Management
 
-- **GitVersion**: Automatic semantic versioning based on git history and tags
-- **Configuration**: `GitVersion.yml` in root directory
-- **Tool Installation**: GitVersion is installed as a local dotnet tool (see `.config/dotnet-tools.json`)
-- **Build Integration**: Version is automatically applied during build via MSBuild properties (`AssemblyVersion`, `FileVersion`, `InformationalVersion`, `PackageVersion`)
+- **MinVer**: Automatic semantic versioning based on git tags
+- **Package Installation**: MinVer is installed as a NuGet package reference in the main project
+- **Build Integration**: MinVer automatically calculates and applies version during build via MSBuild properties (`AssemblyVersion`, `FileVersion`, `InformationalVersion`, `PackageVersion`)
+- **Version Calculation**: MinVer determines version from git tags following SemVer 2.0. Use git tags like `1.0.0` to set versions. Pre-release versions are automatically generated for commits without tags.
+- **Configuration**: MinVer can be configured via MSBuild properties (e.g., `MinVerTagPrefix`, `MinVerMinimumMajorMinor`)
 
 ## Test Patterns
 
@@ -219,9 +215,7 @@ To add support for a new WebDriver (e.g., GeckoDriver):
 - Microsoft.Extensions.Configuration (v6.0.0) - JSON configuration
 - Microsoft.Extensions.Configuration.Binder (v6.0.0) - Config binding
 - Microsoft.Extensions.Configuration.Json (v6.0.0) - JSON provider
-
-**Build Tools:**
-- GitVersion.Tool (v5.8.1) - Semantic versioning (installed as local dotnet tool)
+- MinVer (v6.0.0) - Automatic semantic versioning
 
 **Testing:**
 - NUnit (v3.13.2) - Test framework

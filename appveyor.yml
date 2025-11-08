@@ -7,26 +7,15 @@ environment:
   DOTNET_CLI_TELEMETRY_OPTOUT: 1
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
 
-install:
-  - dotnet tool restore
-
-before_build:
-  - ps: |
-      $env:VERSION = dotnet dotnet-gitversion /showvariable NuGetVersionV2
-      $env:ASSEMBLY_VERSION = dotnet dotnet-gitversion /showvariable AssemblySemVer
-      $env:FILE_VERSION = dotnet dotnet-gitversion /showvariable AssemblySemFileVer
-      $env:INFORMATIONAL_VERSION = dotnet dotnet-gitversion /showvariable InformationalVersion
-      Write-Host "Package Version: $env:VERSION"
-
 build_script:
   - dotnet restore Tiver.Fowl.Drivers.sln
-  - dotnet build Tiver.Fowl.Drivers.sln --configuration Release --no-restore /p:AssemblyVersion=%ASSEMBLY_VERSION% /p:FileVersion=%FILE_VERSION% /p:InformationalVersion=%INFORMATIONAL_VERSION%
+  - dotnet build Tiver.Fowl.Drivers.sln --configuration Release --no-restore
 
 test_script:
   - dotnet test Tiver.Fowl.Drivers.sln --configuration Release --no-build --logger Appveyor --logger "trx;LogFileName=test-results.trx" --results-directory artifacts
 
 after_test:
-  - dotnet pack Tiver.Fowl.Drivers.sln --configuration Release --no-build --output artifacts /p:PackageVersion=%VERSION%
+  - dotnet pack Tiver.Fowl.Drivers.sln --configuration Release --no-build --output artifacts
   - ps: |
       if ($env:NUGET_API_KEY) {
         Get-ChildItem artifacts\*.nupkg | Where-Object { $_.Name -notlike "*.symbols.nupkg" } | ForEach-Object {
