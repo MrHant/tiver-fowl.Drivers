@@ -144,10 +144,30 @@ namespace Tiver.Fowl.Drivers.DriverDownloaders
                 var tempFile = Path.GetTempFileName();
                 File.WriteAllBytes(tempFile, bytes);
 
-                ZipFile.ExtractToDirectory(tempFile, Context.Configuration.DownloadLocation);
+                // Extract and track extracted files
+                var extractedFiles = new List<string>();
+                using (var archive = ZipFile.OpenRead(tempFile))
+                {
+                    foreach (var entry in archive.Entries)
+                    {
+                        if (!string.IsNullOrEmpty(entry.Name))
+                        {
+                            var destinationPath = Path.Combine(Context.Configuration.DownloadLocation, entry.FullName);
+                            entry.ExtractToFile(destinationPath);
+                            extractedFiles.Add(entry.FullName);
+                        }
+                    }
+                }
+
                 File.Delete(tempFile);
+
+                // Write version file with version and extracted files list
                 var versionFilePath = Binary.DriverBinaryVersionFilepath;
-                File.WriteAllText(versionFilePath, versionNumber);
+                var versionFileContent = versionNumber + Environment.NewLine +
+                                        Environment.NewLine +
+                                        string.Join(Environment.NewLine, extractedFiles);
+                File.WriteAllText(versionFilePath, versionFileContent);
+
                 return new DownloadResult
                 {
                     Successful = true,

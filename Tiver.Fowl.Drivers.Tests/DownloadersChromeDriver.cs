@@ -44,14 +44,19 @@ namespace Tiver.Fowl.Drivers.Tests
         {
             foreach (var platform in Platforms)
             {
-                if (File.Exists(DriverFilepath(platform)))
-                {
-                    File.Delete(DriverFilepath(platform));
-                }
-
                 var versionFilepath = Path.Combine(Config.DownloadLocation, $"{BinaryName(platform)}.version");
                 if (File.Exists(versionFilepath))
                 {
+                    var fileList = File.ReadAllLines(versionFilepath)[2..];
+                    foreach (var file in fileList)
+                    {
+                        var filePath = Path.Combine(Config.DownloadLocation, file);
+                        if (File.Exists(filePath))
+                        {
+                            File.Delete(filePath);
+                        }
+                    }
+
                     File.Delete(versionFilepath);
                 }
             }
