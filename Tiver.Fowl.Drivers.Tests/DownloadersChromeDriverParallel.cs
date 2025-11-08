@@ -44,14 +44,19 @@ namespace Tiver.Fowl.Drivers.Tests
         {
             foreach (var platform in Platforms)
             {
-                if (File.Exists(DriverFilepath(platform)))
-                {
-                    File.Delete(DriverFilepath(platform));
-                }
-
                 var versionFilepath = Path.Combine(Config.DownloadLocation, $"{BinaryName(platform)}.version");
                 if (File.Exists(versionFilepath))
                 {
+                    var fileList = File.ReadAllLines(versionFilepath)[2..];
+                    foreach (var file in fileList)
+                    {
+                        var filePath = Path.Combine(Config.DownloadLocation, file);
+                        if (File.Exists(filePath))
+                        {
+                            File.Delete(filePath);
+                        }
+                    }
+
                     File.Delete(versionFilepath);
                 }
             }
@@ -70,7 +75,7 @@ namespace Tiver.Fowl.Drivers.Tests
         public void Download_ParallelTests(int threadNumber)
         {
             var downloader = new ChromeDriverDownloader();
-            const string versionNumber = "76.0.3809.25";
+            const string versionNumber = "123.0.6312.122";
             var result = downloader.DownloadBinary(versionNumber, "win32");
             ClassicAssert.IsTrue(result.Successful, $"Reported error message:{result.ErrorMessage}");
             ClassicAssert.IsTrue(result.PerformedAction == DownloaderAction.BinaryDownloaded || result.PerformedAction == DownloaderAction.NoDownloadNeeded);

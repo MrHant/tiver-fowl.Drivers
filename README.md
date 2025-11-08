@@ -19,15 +19,17 @@ Download WebDriver drivers' binaries from official sources
 * Tests executed on .NET 9
 
 ## Downloaders
-* ChromeDriverDownloader - downloads binaries from http://chromedriver.storage.googleapis.com/
-  * ```LATEST_RELEASE``` version can be used to download latest driver version
-  * ```LATEST_RELEASE_XXX``` version can be used to download latest driver with version XXX
+* **ChromeDriverDownloader** - downloads binaries from the Chrome for Testing feeds (https://googlechromelabs.github.io/chrome-for-testing/).
+  * ```LATEST_RELEASE``` version resolves to the latest stable Chrome for Testing build.
+  * ```LATEST_RELEASE_XXX``` version resolves to the newest known-good build for milestone ```XXX```.
+  * *Note:* For chromedriver v114 or older - use *ChromeDriverOldDownloader*
+* **ChromeDriverOldDownloader** - downloader for older versions of chromedriver. Uses http://chromedriver.storage.googleapis.com/ and should only be used when you explicitly need a driver version <= v114.
 
 ## Sample usage
 ### Download chrome driver of specific version
 
 ```c#
-var result = new ChromeDriverDownloader().DownloadBinary("76.0.3809.25", "win32");
+var result = new ChromeDriverDownloader().DownloadBinary("142.0.7444.61", "win32");
 ```
 
 ### Download configured "chrome" driver
@@ -52,7 +54,7 @@ Top-level element is an object with key "Tiver.Fowl.Drivers".
   * **Version** - required version of driver
   * **Platform** - required platform of driver
 
-### Sample config for ChromeDriver v76.0.3809.25
+### Sample config for ChromeDriver v142.0.7444.61
 
 ```json
 {
@@ -62,7 +64,7 @@ Top-level element is an object with key "Tiver.Fowl.Drivers".
       {
         "Name": "chrome",
         "DownloaderType": "ChromeDriverDownloader",
-        "Version": "76.0.3809.25",
+        "Version": "142.0.7444.61",
         "Platform": "win32"
       }
     ]
