@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a .NET library that downloads WebDriver driver binaries (e.g., ChromeDriver) from official sources. It's distributed as a NuGet package (`Tiver.Fowl.Drivers`) targeting .NET 6 and .NET Standard 2.0.
+This is a .NET library that downloads WebDriver driver binaries (e.g., ChromeDriver) from official sources. It's distributed as a NuGet package (`Tiver.Fowl.Drivers`) targeting .NET 9 and .NET Standard 2.0.
 
 ## Build Commands
 
@@ -206,14 +206,15 @@ To add support for a new WebDriver (e.g., GeckoDriver):
 ## Dependencies
 
 **Main Library:**
-- Microsoft.Extensions.Configuration (v6.0.0) - JSON configuration
-- Microsoft.Extensions.Configuration.Binder (v6.0.0) - Config binding
-- Microsoft.Extensions.Configuration.Json (v6.0.0) - JSON provider
+- Microsoft.Extensions.Configuration (v9.0.10) - JSON configuration
+- Microsoft.Extensions.Configuration.Binder (v9.0.10) - Config binding
+- Microsoft.Extensions.Configuration.Json (v9.0.10) - JSON provider
 - MinVer (v6.0.0) - Automatic semantic versioning
 
 **Testing:**
-- NUnit (v3.13.2) - Test framework
-- NUnit3TestAdapter (v4.2.0) - Test runner
+- NUnit (v4.4.0) - Test framework
+- NUnit3TestAdapter (v5.2.0) - Test runner
+- Microsoft.NET.Test.Sdk (v18.0.0) - Test SDK
 
 ## CI/CD
 
@@ -222,7 +223,7 @@ To add support for a new WebDriver (e.g., GeckoDriver):
 - **Runner**: Windows Latest
 - **Triggers**: Push to master/develop branches
 - **Workflow Steps**:
-  - Test (net6.0 framework only, Release configuration)
+  - Test (net9.0 framework only, Release configuration)
   - Pack NuGet package
   - NuGet OIDC authentication
   - Publish to NuGet (with --skip-duplicate)

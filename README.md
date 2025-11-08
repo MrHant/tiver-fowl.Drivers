@@ -1,4 +1,4 @@
-# tiver-fowl.Drivers ![.NET](https://img.shields.io/badge/.NET-6-blue) 
+# tiver-fowl.Drivers ![.NET](https://img.shields.io/badge/.NET-9-blue) 
 
 Download WebDriver drivers' binaries from official sources
 
@@ -15,8 +15,8 @@ Download WebDriver drivers' binaries from official sources
 * Add calls to execute downloaders. Sample usage can be found below
 
 ### .NET support
-* Package is targeting .NET 6 and .NET Standard 2.0
-* Tests executed on .NET 6
+* Package is targeting .NET 9 and .NET Standard 2.0
+* Tests executed on .NET 9
 
 ## Downloaders
 * ChromeDriverDownloader - downloads binaries from http://chromedriver.storage.googleapis.com/

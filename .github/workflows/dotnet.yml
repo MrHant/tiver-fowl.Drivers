@@ -24,10 +24,10 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: "6.x"
+          dotnet-version: "9.x"
 
-      - name: Run tests - net6.0
-        run: dotnet test -f net6.0 -c Release -v quiet
+      - name: Run tests - net9.0
+        run: dotnet test -f net9.0 -c Release -v quiet
 
       - name: Pack NuGet package
         run: dotnet pack --configuration Release --output ${{ env.OutputDirectory }}
