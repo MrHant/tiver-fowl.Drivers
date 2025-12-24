@@ -5,7 +5,7 @@
       {
         "Name": "chrome",
         "DownloaderType": "ChromeDriverDownloader",
-        "Version": "142.0.7444.61",
+        "Version": "LATEST_RELEASE_STABLE",
         "Platform": "win32"
       }
     ]

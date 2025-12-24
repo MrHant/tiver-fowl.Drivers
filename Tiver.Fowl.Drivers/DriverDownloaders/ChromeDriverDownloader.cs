@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading;
+using System.Threading.Tasks;
 using Tiver.Fowl.Drivers.DriverBinaries;
 
 namespace Tiver.Fowl.Drivers.DriverDownloaders
@@ -21,11 +22,16 @@ namespace Tiver.Fowl.Drivers.DriverDownloaders
 
         public Uri LinkForDownloadsPage => new Uri("https://googlechromelabs.github.io/chrome-for-testing/");
 
+        // Fallback endpoint (only used if lightweight endpoints fail)
         private Uri KnownGoodVersionsUri => new Uri(LinkForDownloadsPage, "known-good-versions-with-downloads.json");
 
-        private Uri LastKnownGoodVersionsUri => new Uri(LinkForDownloadsPage, "last-known-good-versions-with-downloads.json");
-
         public DownloadResult DownloadBinary(string versionNumber, string platform)
+        {
+            // Synchronous wrapper for async implementation
+            return DownloadBinaryAsync(versionNumber, platform).GetAwaiter().GetResult();
+        }
+
+        private async Task<DownloadResult> DownloadBinaryAsync(string versionNumber, string platform)
         {
             Binary = new DriverBinary(GetBinaryNameForPlatform(platform));
 
@@ -34,15 +40,16 @@ namespace Tiver.Fowl.Drivers.DriverDownloaders
 
             try
             {
-                var knownGoodVersions = GetKnownGoodVersions();
-                resolvedVersion = ResolveVersion(versionNumber, knownGoodVersions);
-                downloadLink = GetDownloadLinkForVersion(knownGoodVersions, resolvedVersion, platform);
+                // Use new lightweight API to resolve version and get download URL
+                resolvedVersion = await ResolveVersionAsync(versionNumber);
+                downloadLink = await GetDownloadUrlAsync(resolvedVersion, platform);
+
                 if (downloadLink == null)
                 {
                     return new DownloadResult
                     {
                         Successful = false,
-                        ErrorMessage = "Cannot find specified version to download."
+                        ErrorMessage = $"Cannot find download URL for version {resolvedVersion} and platform {platform}."
                     };
                 }
             }
@@ -56,6 +63,24 @@ namespace Tiver.Fowl.Drivers.DriverDownloaders
                 };
             }
 
+            // Pre-download the binary bytes before acquiring mutex
+            // This keeps async operations outside the mutex to avoid thread-affinity issues
+            byte[] downloadedBytes = null;
+            try
+            {
+                downloadedBytes = await Context.HttpClient.GetByteArrayAsync(downloadLink);
+            }
+            catch (Exception ex)
+            {
+                var message = ex.GetAllExceptionsMessages();
+                return new DownloadResult
+                {
+                    Successful = false,
+                    ErrorMessage = message
+                };
+            }
+
+            // Now acquire mutex for file system operations only
             using var mutex = new Mutex(false, "Global\\ChromeDriverDownloader");
             try
             {
@@ -74,7 +99,7 @@ namespace Tiver.Fowl.Drivers.DriverDownloaders
                     }
 
                     Binary.RemoveBinaryFiles();
-                    var updatedResult = DownloadBinary(downloadLink, resolvedVersion);
+                    var updatedResult = SaveDownloadedBinary(downloadedBytes, resolvedVersion);
                     if (updatedResult.Successful)
                     {
                         updatedResult.PerformedAction = DownloaderAction.BinaryUpdated;
@@ -84,7 +109,7 @@ namespace Tiver.Fowl.Drivers.DriverDownloaders
                 }
                 else
                 {
-                    return DownloadBinary(downloadLink, resolvedVersion);
+                    return SaveDownloadedBinary(downloadedBytes, resolvedVersion);
                 }
             }
             catch (Exception ex)
@@ -109,11 +134,10 @@ namespace Tiver.Fowl.Drivers.DriverDownloaders
                 : "chromedriver";
         }
 
-        private DownloadResult DownloadBinary(Uri downloadLink, string versionNumber)
+        private DownloadResult SaveDownloadedBinary(byte[] bytes, string versionNumber)
         {
             try
             {
-                var bytes = Context.HttpClient.GetByteArrayAsync(downloadLink).Result;
                 var tempFile = Path.GetTempFileName();
                 File.WriteAllBytes(tempFile, bytes);
 
@@ -170,103 +194,151 @@ namespace Tiver.Fowl.Drivers.DriverDownloaders
             return extractedFiles;
         }
 
-        private static Uri GetDownloadLinkForVersion(KnownGoodVersionsResponse versionsResponse, string version, string platform)
-        {
-            if (versionsResponse?.Versions == null)
-            {
-                return null;
-            }
-
-            var versionEntry = versionsResponse.Versions.FirstOrDefault(v =>
-                string.Equals(v.Version, version, StringComparison.OrdinalIgnoreCase));
-
-            var download = versionEntry?.Downloads?.ChromeDriver?.FirstOrDefault(d =>
-                string.Equals(d.Platform, platform, StringComparison.OrdinalIgnoreCase));
-
-            return download?.Url == null ? null : new Uri(download.Url);
-        }
-
-        private string ResolveVersion(string requestedVersion, KnownGoodVersionsResponse knownGoodVersions)
+        /// <summary>
+        /// Resolves version string to actual version number using lightweight text endpoints.
+        /// Supports patterns: LATEST_RELEASE_STABLE, LATEST_RELEASE_BETA, LATEST_RELEASE_DEV,
+        /// LATEST_RELEASE_CANARY, LATEST_RELEASE_XXX (milestone), or specific version numbers.
+        /// </summary>
+        private async Task<string> ResolveVersionAsync(string requestedVersion)
         {
             if (!requestedVersion.StartsWith("LATEST_RELEASE", StringComparison.OrdinalIgnoreCase))
             {
+                // Specific version number - return as-is
                 return requestedVersion;
             }
 
+            // Use lightweight text endpoints for version resolution
             var suffix = requestedVersion.Substring("LATEST_RELEASE".Length);
+
             if (string.IsNullOrWhiteSpace(suffix))
             {
-                return GetLatestStableVersion();
+                // Default LATEST_RELEASE -> use STABLE channel
+                return await FetchVersionFromTextEndpointAsync("LATEST_RELEASE_STABLE");
             }
 
-            if (suffix.StartsWith("_", StringComparison.OrdinalIgnoreCase) &&
-                int.TryParse(suffix.TrimStart('_'), out var milestone))
+            if (suffix.StartsWith("_", StringComparison.OrdinalIgnoreCase))
             {
-                return GetLatestVersionForMilestone(milestone, knownGoodVersions);
+                var suffixValue = suffix.TrimStart('_').ToUpperInvariant();
+
+                // Check if it's a channel (STABLE, BETA, DEV, CANARY)
+                if (suffixValue == "STABLE" || suffixValue == "BETA" ||
+                    suffixValue == "DEV" || suffixValue == "CANARY")
+                {
+                    return await FetchVersionFromTextEndpointAsync($"LATEST_RELEASE_{suffixValue}");
+                }
+
+                // Check if it's a milestone number (e.g., LATEST_RELEASE_116)
+                if (int.TryParse(suffixValue, out _))
+                {
+                    return await FetchVersionFromTextEndpointAsync($"LATEST_RELEASE_{suffixValue}");
+                }
             }
 
-            throw new InvalidOperationException($"Unknown latest release format '{requestedVersion}'.");
+            throw new InvalidOperationException(
+                $"Unknown version pattern '{requestedVersion}'. " +
+                "Supported patterns: LATEST_RELEASE_STABLE, LATEST_RELEASE_BETA, LATEST_RELEASE_DEV, " +
+                "LATEST_RELEASE_CANARY, LATEST_RELEASE_XXX (milestone), or specific version numbers.");
         }
 
-        private static string GetLatestVersionForMilestone(int milestone, KnownGoodVersionsResponse knownGoodVersions)
+        /// <summary>
+        /// Fetches version number from lightweight text endpoint.
+        /// These endpoints return just the version number as plain text (e.g., "142.0.7444.61").
+        /// </summary>
+        private async Task<string> FetchVersionFromTextEndpointAsync(string endpointName)
         {
-            if (knownGoodVersions?.Versions == null)
+            try
             {
-                throw new InvalidOperationException("Known good versions list is empty.");
+                var uri = new Uri(LinkForDownloadsPage, endpointName);
+                var response = await Context.HttpClient.GetAsync(uri);
+                response.EnsureSuccessStatusCode();
+                var version = await response.Content.ReadAsStringAsync();
+                return version.Trim();
             }
-
-            var milestonePrefix = $"{milestone}.";
-            var candidate = knownGoodVersions.Versions
-                .Where(v => v.Version.StartsWith(milestonePrefix, StringComparison.OrdinalIgnoreCase))
-                .OrderBy(v => ParseVersion(v.Version))
-                .LastOrDefault();
-
-            if (candidate == null)
+            catch (Exception ex)
             {
-                throw new InvalidOperationException($"Cannot find known good version for milestone {milestone}.");
+                throw new InvalidOperationException(
+                    $"Failed to fetch version from endpoint '{endpointName}': {ex.Message}", ex);
             }
-
-            return candidate.Version;
         }
 
-        private static Version ParseVersion(string value)
+        /// <summary>
+        /// Gets download URL for specific version and platform using individual version JSON endpoint.
+        /// Uses {version}.json endpoint which is much smaller than full manifest files.
+        /// Falls back to known-good-versions if individual version file is not found.
+        /// </summary>
+        private async Task<Uri> GetDownloadUrlAsync(string version, string platform)
         {
-            return Version.TryParse(value, out var parsed) ? parsed : new Version(0, 0);
-        }
-
-        private string GetLatestStableVersion()
-        {
-            using var response = Context.HttpClient.GetAsync(LastKnownGoodVersionsUri).Result;
-            response.EnsureSuccessStatusCode();
-            using var content = response.Content;
-            var json = content.ReadAsStringAsync().Result;
-            var data = JsonSerializer.Deserialize<LastKnownGoodVersionsResponse>(json, JsonOptions);
-
-            if (data?.Channels == null || !data.Channels.TryGetValue("Stable", out var stable) ||
-                string.IsNullOrWhiteSpace(stable.Version))
+            try
             {
-                throw new InvalidOperationException("Unable to determine last known good stable version.");
+                // Try individual version JSON endpoint first (lightweight)
+                var versionJsonUri = new Uri(LinkForDownloadsPage, $"{version}.json");
+                var response = await Context.HttpClient.GetAsync(versionJsonUri);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var json = await response.Content.ReadAsStringAsync();
+                    var versionData = JsonSerializer.Deserialize<VersionJsonResponse>(json, JsonOptions);
+
+                    var download = versionData?.Downloads?.ChromeDriver?.FirstOrDefault(d =>
+                        string.Equals(d.Platform, platform, StringComparison.OrdinalIgnoreCase));
+
+                    if (download?.Url != null)
+                    {
+                        return new Uri(download.Url);
+                    }
+                }
+            }
+            catch
+            {
+                // Fall through to fallback
             }
 
-            return stable.Version;
+            // Fallback: use known-good-versions manifest (for older versions or errors)
+            return await GetDownloadUrlFromKnownGoodVersionsAsync(version, platform);
         }
 
-        private KnownGoodVersionsResponse GetKnownGoodVersions()
+        /// <summary>
+        /// Fallback method that uses the full known-good-versions manifest.
+        /// Only used when individual version JSON endpoint is not available.
+        /// </summary>
+        private async Task<Uri> GetDownloadUrlFromKnownGoodVersionsAsync(string version, string platform)
         {
-            using var response = Context.HttpClient.GetAsync(KnownGoodVersionsUri).Result;
-            response.EnsureSuccessStatusCode();
-            using var content = response.Content;
-            var json = content.ReadAsStringAsync().Result;
-            var data = JsonSerializer.Deserialize<KnownGoodVersionsResponse>(json, JsonOptions);
-
-            if (data?.Versions == null || data.Versions.Count == 0)
+            try
             {
-                throw new InvalidOperationException("Unable to load known good versions list.");
-            }
+                var response = await Context.HttpClient.GetAsync(KnownGoodVersionsUri);
+                response.EnsureSuccessStatusCode();
+                var json = await response.Content.ReadAsStringAsync();
+                var data = JsonSerializer.Deserialize<KnownGoodVersionsResponse>(json, JsonOptions);
 
-            return data;
+                if (data?.Versions == null)
+                {
+                    return null;
+                }
+
+                var versionEntry = data.Versions.FirstOrDefault(v =>
+                    string.Equals(v.Version, version, StringComparison.OrdinalIgnoreCase));
+
+                var download = versionEntry?.Downloads?.ChromeDriver?.FirstOrDefault(d =>
+                    string.Equals(d.Platform, platform, StringComparison.OrdinalIgnoreCase));
+
+                return download?.Url == null ? null : new Uri(download.Url);
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException(
+                    $"Failed to get download URL from fallback manifest for version {version}: {ex.Message}", ex);
+            }
         }
 
+        // Response model for individual version JSON endpoint (e.g., 142.0.7444.61.json)
+        // This is a lightweight alternative to downloading the full known-good-versions manifest
+        private class VersionJsonResponse
+        {
+            [JsonPropertyName("downloads")]
+            public ChromeDriverDownloads Downloads { get; set; }
+        }
+
+        // Response model for known-good-versions-with-downloads.json (fallback only)
         private class KnownGoodVersionsResponse
         {
             [JsonPropertyName("versions")]
@@ -282,6 +354,7 @@ namespace Tiver.Fowl.Drivers.DriverDownloaders
             public ChromeDriverDownloads Downloads { get; set; }
         }
 
+        // Shared download structure
         private class ChromeDriverDownloads
         {
             [JsonPropertyName("chromedriver")]
@@ -295,18 +368,6 @@ namespace Tiver.Fowl.Drivers.DriverDownloaders
 
             [JsonPropertyName("url")]
             public string Url { get; set; }
-        }
-
-        private class LastKnownGoodVersionsResponse
-        {
-            [JsonPropertyName("channels")]
-            public Dictionary<string, ChannelInfo> Channels { get; set; }
-        }
-
-        private class ChannelInfo
-        {
-            [JsonPropertyName("version")]
-            public string Version { get; set; }
         }
     }
 }

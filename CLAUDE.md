@@ -68,8 +68,13 @@ The library uses an interface-based strategy pattern with reflection-based facto
    - `DownloadBinaryFor(name) : DownloadResult` - End-to-end download using config
 
 3. **ChromeDriverDownloader** - Current implementation (located at `/Tiver.Fowl.Drivers/DriverDownloaders/ChromeDriverDownloader.cs`)
-   - Downloads from `chromedriver.storage.googleapis.com`
-   - Supports `LATEST_RELEASE` and `LATEST_RELEASE_XXX` versions
+   - Downloads from `googlechromelabs.github.io/chrome-for-testing/`
+   - Uses lightweight text endpoints for version resolution (KB vs. MB)
+   - Supports channel-based releases: `LATEST_RELEASE_STABLE`, `LATEST_RELEASE_BETA`, `LATEST_RELEASE_DEV`, `LATEST_RELEASE_CANARY`
+   - Supports milestone versions: `LATEST_RELEASE_XXX` (e.g., `LATEST_RELEASE_141`)
+   - Supports specific version numbers (e.g., `142.0.7444.61`)
+   - Uses individual version JSON endpoints (`{version}.json`) for efficient downloads
+   - Fully async/await implementation for optimal performance
    - Uses named Mutex (`Global\\ChromeDriverDownloader`) for thread-safety
    - Stores version and list of extracted files in `.version` files to avoid redundant downloads and enable complete cleanup
 
@@ -87,13 +92,21 @@ Configuration is loaded from `Tiver_config.json` using Microsoft.Extensions.Conf
       {
         "Name": "chrome",
         "DownloaderType": "ChromeDriverDownloader",
-        "Version": "76.0.3809.25",
+        "Version": "LATEST_RELEASE_STABLE",
         "Platform": "win32"
       }
     ]
   }
 }
 ```
+
+**Supported Version Patterns for ChromeDriver:**
+- `LATEST_RELEASE_STABLE` - Latest stable channel release
+- `LATEST_RELEASE_BETA` - Latest beta channel release
+- `LATEST_RELEASE_DEV` - Latest dev channel release
+- `LATEST_RELEASE_CANARY` - Latest canary channel release
+- `LATEST_RELEASE_141` - Latest version in milestone 141
+- `142.0.7444.61` - Specific version number
 
 **Context.cs** (`/Tiver.Fowl.Drivers/Configuration/Context.cs`) - Static class that:
 - Loads configuration on first access (static constructor)
@@ -135,7 +148,7 @@ Tiver.Fowl.Drivers/                  # Main library
 
 Tiver.Fowl.Drivers.Tests/            # Integration tests with config
 ├── Tiver_config.json                 # Test configuration
-├── DownloadersChromeDriver.cs        # Main test suite (10 tests)
+├── DownloadersChromeDriver.cs        # Main test suite (14+ tests including channel tests)
 └── DownloadersChromeDriverParallel.cs # Parallel safety tests
 
 Tiver.Fowl.Drivers.TestsWithoutConfigFile/ # Tests without config
