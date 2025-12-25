@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Linq;
 
 namespace Tiver.Fowl.Drivers.DriverBinaries
 {
@@ -24,13 +25,39 @@ namespace Tiver.Fowl.Drivers.DriverBinaries
             }
 
             using var stream = File.OpenText(DriverBinaryVersionFilepath);
-            return stream.ReadToEnd();
+            return stream.ReadLine();
+        }
+
+        public string[] GetExtractedFiles()
+        {
+            if (!File.Exists(DriverBinaryVersionFilepath))
+            {
+                return new string[0];
+            }
+
+            var lines = File.ReadAllLines(DriverBinaryVersionFilepath);
+            // Skip first line (version) and second line (empty line)
+            return lines.Length > 2 ? lines.Skip(2).Where(l => !string.IsNullOrWhiteSpace(l)).ToArray() : new string[0];
         }
 
         public void RemoveBinaryFiles()
         {
-            File.Delete(DriverBinaryFilepath);
-            File.Delete(DriverBinaryVersionFilepath);
+            // Delete all extracted files tracked in version file
+            var extractedFiles = GetExtractedFiles();
+            foreach (var file in extractedFiles)
+            {
+                var filePath = Path.Combine(Context.Configuration.DownloadLocation, file);
+                if (File.Exists(filePath))
+                {
+                    File.Delete(filePath);
+                }
+            }
+
+            // Delete version file
+            if (File.Exists(DriverBinaryVersionFilepath))
+            {
+                File.Delete(DriverBinaryVersionFilepath);
+            }
         }
 
         private string DriverBinaryFilepath => Path.Combine(Context.Configuration.DownloadLocation, DriverBinaryFilename);

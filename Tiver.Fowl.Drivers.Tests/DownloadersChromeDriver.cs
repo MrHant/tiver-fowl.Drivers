@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using Microsoft.Extensions.Configuration;
 using NUnit.Framework;
+using NUnit.Framework.Legacy;
 using Tiver.Fowl.Drivers.Configuration;
 using Tiver.Fowl.Drivers.DriverBinaries;
 using Tiver.Fowl.Drivers.DriverDownloaders;
@@ -24,7 +25,9 @@ namespace Tiver.Fowl.Drivers.Tests
             }
         }
 
-        private static string[] Platforms = {"win32", "linux64"};
+        private const string v142Version = "142.0.7444.61";
+        private const string Prevv142Version = "142.0.7444.59";
+        private static readonly string[] Platforms = {"win32", "linux64"};
         
         private static string BinaryName(string platform)
         {
@@ -44,14 +47,19 @@ namespace Tiver.Fowl.Drivers.Tests
         {
             foreach (var platform in Platforms)
             {
-                if (File.Exists(DriverFilepath(platform)))
-                {
-                    File.Delete(DriverFilepath(platform));
-                }
-
                 var versionFilepath = Path.Combine(Config.DownloadLocation, $"{BinaryName(platform)}.version");
                 if (File.Exists(versionFilepath))
                 {
+                    var fileList = File.ReadAllLines(versionFilepath)[2..];
+                    foreach (var file in fileList)
+                    {
+                        var filePath = Path.Combine(Config.DownloadLocation, file);
+                        if (File.Exists(filePath))
+                        {
+                            File.Delete(filePath);
+                        }
+                    }
+
                     File.Delete(versionFilepath);
                 }
             }
@@ -64,49 +72,50 @@ namespace Tiver.Fowl.Drivers.Tests
         }
 
         [Test]
-        public void Download_v76([ValueSource(nameof(Platforms))]string platform)
+        public void Download_v142([ValueSource(nameof(Platforms))]string platform)
         {
             var downloader = new ChromeDriverDownloader();
-            const string versionNumber = "76.0.3809.25";
-            var result = downloader.DownloadBinary(versionNumber, platform);
-            Assert.IsTrue(result.Successful, $"Reported error message:{result.ErrorMessage}");
-            Assert.AreEqual(DownloaderAction.BinaryDownloaded, result.PerformedAction);
-            Assert.IsNull(result.ErrorMessage);
+            var result = downloader.DownloadBinary(v142Version, platform);
+            ClassicAssert.IsTrue(result.Successful, $"Reported error message:{result.ErrorMessage}");
+            ClassicAssert.AreEqual(DownloaderAction.BinaryDownloaded, result.PerformedAction);
+            ClassicAssert.IsNull(result.ErrorMessage);
             var exists = File.Exists(DriverFilepath(platform));
-            Assert.IsTrue(exists);
+            ClassicAssert.IsTrue(exists);
             exists = downloader.Binary.CheckBinaryExists();
-            Assert.IsTrue(exists);
-            Assert.AreEqual(versionNumber, downloader.Binary.GetExistingBinaryVersion());
+            ClassicAssert.IsTrue(exists);
+            ClassicAssert.AreEqual(v142Version, downloader.Binary.GetExistingBinaryVersion());
         }
 
         [Test]
         public void Download_From_Configuration([ValueSource(nameof(Platforms))]string platform)
         {
             var downloader = Downloaders.Get("chrome");
-            var result = downloader.DownloadBinary("76.0.3809.25", platform);
-            Assert.IsTrue(result.Successful, $"Reported error message:{result.ErrorMessage}");
-            Assert.AreEqual(DownloaderAction.BinaryDownloaded, result.PerformedAction);
-            Assert.IsNull(result.ErrorMessage);
+            var result = downloader.DownloadBinary(v142Version, platform);
+            ClassicAssert.IsTrue(result.Successful, $"Reported error message:{result.ErrorMessage}");
+            ClassicAssert.AreEqual(DownloaderAction.BinaryDownloaded, result.PerformedAction);
+            ClassicAssert.IsNull(result.ErrorMessage);
             var exists = File.Exists(DriverFilepath(platform));
-            Assert.IsTrue(exists);
+            ClassicAssert.IsTrue(exists);
             exists = downloader.Binary.CheckBinaryExists();
-            Assert.IsTrue(exists);
-            Assert.AreEqual("76.0.3809.25", downloader.Binary.GetExistingBinaryVersion());
+            ClassicAssert.IsTrue(exists);
+            ClassicAssert.AreEqual(v142Version, downloader.Binary.GetExistingBinaryVersion());
         }
 
         [Test]
         public void Download_From_Configuration_directly()
         {
             var result = Downloaders.DownloadBinaryFor("chrome");
-            Assert.IsTrue(result.Successful, $"Reported error message:{result.ErrorMessage}");
-            Assert.AreEqual(DownloaderAction.BinaryDownloaded, result.PerformedAction);
-            Assert.IsNull(result.ErrorMessage);
+            ClassicAssert.IsTrue(result.Successful, $"Reported error message:{result.ErrorMessage}");
+            ClassicAssert.AreEqual(DownloaderAction.BinaryDownloaded, result.PerformedAction);
+            ClassicAssert.IsNull(result.ErrorMessage);
             var exists = File.Exists(DriverFilepath("win32"));
-            Assert.IsTrue(exists);
+            ClassicAssert.IsTrue(exists);
             var driverBinary = new DriverBinary(BinaryName("win32"));
             exists = driverBinary.CheckBinaryExists();
-            Assert.IsTrue(exists);
-            Assert.AreEqual("76.0.3809.25", driverBinary.GetExistingBinaryVersion());
+            ClassicAssert.IsTrue(exists);
+            // Config now uses LATEST_RELEASE_STABLE, so just verify version exists
+            ClassicAssert.IsNotNull(driverBinary.GetExistingBinaryVersion());
+            ClassicAssert.IsNotEmpty(driverBinary.GetExistingBinaryVersion());
         }
 
         [Test]
@@ -114,49 +123,48 @@ namespace Tiver.Fowl.Drivers.Tests
         {
             var downloader = new ChromeDriverDownloader();
             var result = downloader.DownloadBinary("LATEST_RELEASE", platform);
-            Assert.IsTrue(result.Successful, $"Reported error message:{result.ErrorMessage}");
-            Assert.AreEqual(DownloaderAction.BinaryDownloaded, result.PerformedAction);
-            Assert.IsNull(result.ErrorMessage);
+            ClassicAssert.IsTrue(result.Successful, $"Reported error message:{result.ErrorMessage}");
+            ClassicAssert.AreEqual(DownloaderAction.BinaryDownloaded, result.PerformedAction);
+            ClassicAssert.IsNull(result.ErrorMessage);
             var exists = File.Exists(DriverFilepath(platform));
-            Assert.IsTrue(exists);
+            ClassicAssert.IsTrue(exists);
             exists = downloader.Binary.CheckBinaryExists();
-            Assert.IsTrue(exists);
-            Assert.IsNotNull(downloader.Binary.GetExistingBinaryVersion());
+            ClassicAssert.IsTrue(exists);
+            ClassicAssert.IsNotNull(downloader.Binary.GetExistingBinaryVersion());
         }
         
         [Test]
-        public void Download_Latest_Release_v97([ValueSource(nameof(Platforms))]string platform)
+        public void Download_Latest_Release_v141([ValueSource(nameof(Platforms))]string platform)
         {
             var downloader = new ChromeDriverDownloader();
-            var result = downloader.DownloadBinary("LATEST_RELEASE_97", platform);
-            Assert.IsTrue(result.Successful, $"Reported error message:{result.ErrorMessage}");
-            Assert.AreEqual(DownloaderAction.BinaryDownloaded, result.PerformedAction);
-            Assert.IsNull(result.ErrorMessage);
+            var result = downloader.DownloadBinary("LATEST_RELEASE_141", platform);
+            ClassicAssert.IsTrue(result.Successful, $"Reported error message:{result.ErrorMessage}");
+            ClassicAssert.AreEqual(DownloaderAction.BinaryDownloaded, result.PerformedAction);
+            ClassicAssert.IsNull(result.ErrorMessage);
             var exists = File.Exists(DriverFilepath(platform));
-            Assert.IsTrue(exists);
+            ClassicAssert.IsTrue(exists);
             exists = downloader.Binary.CheckBinaryExists();
-            Assert.IsTrue(exists);
-            Assert.IsNotNull(downloader.Binary.GetExistingBinaryVersion());
+            ClassicAssert.IsTrue(exists);
+            ClassicAssert.IsTrue(downloader.Binary.GetExistingBinaryVersion().StartsWith("141."));
         }
         
         [Test]
         public void DownloadTwoTimes([ValueSource(nameof(Platforms))]string platform)
         {
             var downloader = new ChromeDriverDownloader();
-            const string versionNumber = "76.0.3809.25";
-            var result = downloader.DownloadBinary(versionNumber, platform);
-            Assert.IsTrue(result.Successful, $"Reported error message:{result.ErrorMessage}");
-            Assert.AreEqual(DownloaderAction.BinaryDownloaded, result.PerformedAction);
-            Assert.IsNull(result.ErrorMessage);
-            var resultTwo = downloader.DownloadBinary(versionNumber, platform);
-            Assert.IsTrue(resultTwo.Successful);
-            Assert.AreEqual(DownloaderAction.NoDownloadNeeded, resultTwo.PerformedAction);
-            Assert.IsNull(result.ErrorMessage);
+            var result = downloader.DownloadBinary(v142Version, platform);
+            ClassicAssert.IsTrue(result.Successful, $"Reported error message:{result.ErrorMessage}");
+            ClassicAssert.AreEqual(DownloaderAction.BinaryDownloaded, result.PerformedAction);
+            ClassicAssert.IsNull(result.ErrorMessage);
+            var resultTwo = downloader.DownloadBinary(v142Version, platform);
+            ClassicAssert.IsTrue(resultTwo.Successful);
+            ClassicAssert.AreEqual(DownloaderAction.NoDownloadNeeded, resultTwo.PerformedAction);
+            ClassicAssert.IsNull(result.ErrorMessage);
             var exists = File.Exists(DriverFilepath(platform));
-            Assert.IsTrue(exists);
+            ClassicAssert.IsTrue(exists);
             exists = downloader.Binary.CheckBinaryExists();
-            Assert.IsTrue(exists);
-            Assert.AreEqual(versionNumber, downloader.Binary.GetExistingBinaryVersion());
+            ClassicAssert.IsTrue(exists);
+            ClassicAssert.AreEqual(v142Version, downloader.Binary.GetExistingBinaryVersion());
         }       
                 
         [Test]
@@ -165,67 +173,146 @@ namespace Tiver.Fowl.Drivers.Tests
             var downloader = new ChromeDriverDownloader();
             const string versionNumber = "xxx";
             var result = downloader.DownloadBinary(versionNumber, platform);
-            Assert.IsFalse(result.Successful);
-            Assert.AreEqual(DownloaderAction.Unknown, result.PerformedAction);
-            Assert.AreEqual("Cannot find specified version to download.", result.ErrorMessage);
+            ClassicAssert.IsFalse(result.Successful);
+            ClassicAssert.AreEqual(DownloaderAction.Unknown, result.PerformedAction);
+            // Error message will indicate download URL not found
+            ClassicAssert.IsNotNull(result.ErrorMessage);
+            ClassicAssert.IsTrue(result.ErrorMessage.Contains("download URL") || result.ErrorMessage.Contains("Cannot find"));
             var exists = File.Exists(DriverFilepath(platform));
-            Assert.IsFalse(exists);
+            ClassicAssert.IsFalse(exists);
             exists = downloader.Binary.CheckBinaryExists();
-            Assert.IsFalse(exists);
+            ClassicAssert.IsFalse(exists);
         }
         
         [Test]
         public void DownloadDifferentVersion([ValueSource(nameof(Platforms))]string platform)
         {
             var downloader = new ChromeDriverDownloader();
-            var versionNumber = "76.0.3809.12";
+            var versionNumber = Prevv142Version;
             var result = downloader.DownloadBinary(versionNumber, platform);
-            Assert.IsTrue(result.Successful, $"Reported error message:{result.ErrorMessage}");
-            Assert.AreEqual(DownloaderAction.BinaryDownloaded, result.PerformedAction);
-            Assert.IsNull(result.ErrorMessage);
+            ClassicAssert.IsTrue(result.Successful, $"Reported error message:{result.ErrorMessage}");
+            ClassicAssert.AreEqual(DownloaderAction.BinaryDownloaded, result.PerformedAction);
+            ClassicAssert.IsNull(result.ErrorMessage);
             var exists = File.Exists(DriverFilepath(platform));
-            Assert.IsTrue(exists);
+            ClassicAssert.IsTrue(exists);
             exists = downloader.Binary.CheckBinaryExists();
-            Assert.IsTrue(exists);
-            Assert.AreEqual(versionNumber, downloader.Binary.GetExistingBinaryVersion());
+            ClassicAssert.IsTrue(exists);
+            ClassicAssert.AreEqual(versionNumber, downloader.Binary.GetExistingBinaryVersion());
             
-            versionNumber = "76.0.3809.25";
+            versionNumber = v142Version;
             result = downloader.DownloadBinary(versionNumber, platform);
-            Assert.IsTrue(result.Successful, $"Reported error message:{result.ErrorMessage}");
-            Assert.AreEqual(DownloaderAction.BinaryUpdated, result.PerformedAction);
-            Assert.IsNull(result.ErrorMessage);
+            ClassicAssert.IsTrue(result.Successful, $"Reported error message:{result.ErrorMessage}");
+            ClassicAssert.AreEqual(DownloaderAction.BinaryUpdated, result.PerformedAction);
+            ClassicAssert.IsNull(result.ErrorMessage);
             exists = File.Exists(DriverFilepath(platform));
-            Assert.IsTrue(exists);
+            ClassicAssert.IsTrue(exists);
             exists = downloader.Binary.CheckBinaryExists();
-            Assert.IsTrue(exists);
-            Assert.AreEqual(versionNumber, downloader.Binary.GetExistingBinaryVersion());
+            ClassicAssert.IsTrue(exists);
+            ClassicAssert.AreEqual(versionNumber, downloader.Binary.GetExistingBinaryVersion());
         }
         
         [Test]
         public void DownloadDifferentVersionUsingLatest([ValueSource(nameof(Platforms))]string platform)
         {
             var downloader = new ChromeDriverDownloader();
-            var versionNumber = "LATEST_RELEASE_103";
+            var versionNumber = "LATEST_RELEASE_142";
             var result = downloader.DownloadBinary(versionNumber, platform);
-            Assert.IsTrue(result.Successful, $"Reported error message:{result.ErrorMessage}");
-            Assert.AreEqual(DownloaderAction.BinaryDownloaded, result.PerformedAction);
-            Assert.IsNull(result.ErrorMessage);
+            ClassicAssert.IsTrue(result.Successful, $"Reported error message:{result.ErrorMessage}");
+            ClassicAssert.AreEqual(DownloaderAction.BinaryDownloaded, result.PerformedAction);
+            ClassicAssert.IsNull(result.ErrorMessage);
             var exists = File.Exists(DriverFilepath(platform));
-            Assert.IsTrue(exists);
+            ClassicAssert.IsTrue(exists);
             exists = downloader.Binary.CheckBinaryExists();
-            Assert.IsTrue(exists);
-            Assert.IsTrue(downloader.Binary.GetExistingBinaryVersion().StartsWith("103"));
+            ClassicAssert.IsTrue(exists);
+            ClassicAssert.IsTrue(downloader.Binary.GetExistingBinaryVersion().StartsWith("142."));
             
-            versionNumber = "LATEST_RELEASE_102";
+            versionNumber = "LATEST_RELEASE_141";
             result = downloader.DownloadBinary(versionNumber, platform);
-            Assert.IsTrue(result.Successful, $"Reported error message:{result.ErrorMessage}");
-            Assert.AreEqual(DownloaderAction.BinaryUpdated, result.PerformedAction);
-            Assert.IsNull(result.ErrorMessage);
+            ClassicAssert.IsTrue(result.Successful, $"Reported error message:{result.ErrorMessage}");
+            ClassicAssert.AreEqual(DownloaderAction.BinaryUpdated, result.PerformedAction);
+            ClassicAssert.IsNull(result.ErrorMessage);
             exists = File.Exists(DriverFilepath(platform));
-            Assert.IsTrue(exists);
+            ClassicAssert.IsTrue(exists);
             exists = downloader.Binary.CheckBinaryExists();
-            Assert.IsTrue(exists);
-            Assert.IsTrue(downloader.Binary.GetExistingBinaryVersion().StartsWith("102"));
+            ClassicAssert.IsTrue(exists);
+            ClassicAssert.IsTrue(downloader.Binary.GetExistingBinaryVersion().StartsWith("141."));
+        }
+
+        [Test]
+        public void Download_Latest_Release_Stable([ValueSource(nameof(Platforms))]string platform)
+        {
+            var downloader = new ChromeDriverDownloader();
+            var result = downloader.DownloadBinary("LATEST_RELEASE_STABLE", platform);
+            ClassicAssert.IsTrue(result.Successful, $"Reported error message:{result.ErrorMessage}");
+            ClassicAssert.AreEqual(DownloaderAction.BinaryDownloaded, result.PerformedAction);
+            ClassicAssert.IsNull(result.ErrorMessage);
+            var exists = File.Exists(DriverFilepath(platform));
+            ClassicAssert.IsTrue(exists);
+            exists = downloader.Binary.CheckBinaryExists();
+            ClassicAssert.IsTrue(exists);
+            var version = downloader.Binary.GetExistingBinaryVersion();
+            ClassicAssert.IsNotNull(version);
+            ClassicAssert.IsNotEmpty(version);
+            // Stable version should be a valid version number
+            ClassicAssert.IsTrue(System.Version.TryParse(version, out _),
+                $"Expected valid version number but got: {version}");
+        }
+
+        [Test]
+        public void Download_Latest_Release_Beta([ValueSource(nameof(Platforms))]string platform)
+        {
+            var downloader = new ChromeDriverDownloader();
+            var result = downloader.DownloadBinary("LATEST_RELEASE_BETA", platform);
+            ClassicAssert.IsTrue(result.Successful, $"Reported error message:{result.ErrorMessage}");
+            ClassicAssert.AreEqual(DownloaderAction.BinaryDownloaded, result.PerformedAction);
+            ClassicAssert.IsNull(result.ErrorMessage);
+            var exists = File.Exists(DriverFilepath(platform));
+            ClassicAssert.IsTrue(exists);
+            exists = downloader.Binary.CheckBinaryExists();
+            ClassicAssert.IsTrue(exists);
+            var version = downloader.Binary.GetExistingBinaryVersion();
+            ClassicAssert.IsNotNull(version);
+            ClassicAssert.IsNotEmpty(version);
+            ClassicAssert.IsTrue(System.Version.TryParse(version, out _),
+                $"Expected valid version number but got: {version}");
+        }
+
+        [Test]
+        public void Download_Latest_Release_Dev([ValueSource(nameof(Platforms))]string platform)
+        {
+            var downloader = new ChromeDriverDownloader();
+            var result = downloader.DownloadBinary("LATEST_RELEASE_DEV", platform);
+            ClassicAssert.IsTrue(result.Successful, $"Reported error message:{result.ErrorMessage}");
+            ClassicAssert.AreEqual(DownloaderAction.BinaryDownloaded, result.PerformedAction);
+            ClassicAssert.IsNull(result.ErrorMessage);
+            var exists = File.Exists(DriverFilepath(platform));
+            ClassicAssert.IsTrue(exists);
+            exists = downloader.Binary.CheckBinaryExists();
+            ClassicAssert.IsTrue(exists);
+            var version = downloader.Binary.GetExistingBinaryVersion();
+            ClassicAssert.IsNotNull(version);
+            ClassicAssert.IsNotEmpty(version);
+            ClassicAssert.IsTrue(System.Version.TryParse(version, out _),
+                $"Expected valid version number but got: {version}");
+        }
+
+        [Test]
+        public void Download_Latest_Release_Canary([ValueSource(nameof(Platforms))]string platform)
+        {
+            var downloader = new ChromeDriverDownloader();
+            var result = downloader.DownloadBinary("LATEST_RELEASE_CANARY", platform);
+            ClassicAssert.IsTrue(result.Successful, $"Reported error message:{result.ErrorMessage}");
+            ClassicAssert.AreEqual(DownloaderAction.BinaryDownloaded, result.PerformedAction);
+            ClassicAssert.IsNull(result.ErrorMessage);
+            var exists = File.Exists(DriverFilepath(platform));
+            ClassicAssert.IsTrue(exists);
+            exists = downloader.Binary.CheckBinaryExists();
+            ClassicAssert.IsTrue(exists);
+            var version = downloader.Binary.GetExistingBinaryVersion();
+            ClassicAssert.IsNotNull(version);
+            ClassicAssert.IsNotEmpty(version);
+            ClassicAssert.IsTrue(System.Version.TryParse(version, out _),
+                $"Expected valid version number but got: {version}");
         }
     }
 }

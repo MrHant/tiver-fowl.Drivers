@@ -18,6 +18,12 @@
         string GetExistingBinaryVersion();
 
         /// <summary>
+        /// Get list of extracted files from version file
+        /// </summary>
+        /// <returns>List of extracted file paths or empty list if version file doesn't exist</returns>
+        string[] GetExtractedFiles();
+
+        /// <summary>
         /// Remove binary and .version files
         /// </summary>
         void RemoveBinaryFiles();
