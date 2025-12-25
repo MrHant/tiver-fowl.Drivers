@@ -1,4 +1,4 @@
-# tiver-fowl.Drivers ![.NET](https://img.shields.io/badge/.NET-9-blue) 
+# tiver-fowl.Drivers ![.NET](https://img.shields.io/badge/.NET-10-blue) 
 
 Download WebDriver drivers' binaries from official sources
 
@@ -11,17 +11,18 @@ Download WebDriver drivers' binaries from official sources
 
 ## Installation
 * Add ```Tiver.Fowl.Drivers``` nuget package to solution
-* Add downloaders configuration to ```app.config``` file. Sample configuration can be found below
+* Add downloaders configuration to a ```Tiver_config.json``` file. Sample configuration can be found below
 * Add calls to execute downloaders. Sample usage can be found below
 
 ### .NET support
-* Package is targeting .NET 9 and .NET Standard 2.0
-* Tests executed on .NET 9
+* Package is targeting .NET 10 and .NET Standard 2.0
+* Tests executed on .NET 10
 
 ## Downloaders
 * **ChromeDriverDownloader** - downloads binaries from the Chrome for Testing feeds (https://googlechromelabs.github.io/chrome-for-testing/).
-  * ```LATEST_RELEASE``` version resolves to the latest stable Chrome for Testing build.
-  * ```LATEST_RELEASE_XXX``` version resolves to the newest known-good build for milestone ```XXX```.
+  * ```LATEST_RELEASE``` or ```LATEST_RELEASE_STABLE``` resolves to the latest stable Chrome for Testing build.
+  * ```LATEST_RELEASE_BETA```, ```LATEST_RELEASE_DEV```, ```LATEST_RELEASE_CANARY``` resolve to the latest build for that channel.
+  * ```LATEST_RELEASE_XXX``` resolves to the newest known-good build for milestone ```XXX```.
   * *Note:* For chromedriver v114 or older - use *ChromeDriverOldDownloader*
 * **ChromeDriverOldDownloader** - downloader for older versions of chromedriver. Uses http://chromedriver.storage.googleapis.com/ and should only be used when you explicitly need a driver version <= v114.
 
@@ -54,7 +55,7 @@ Top-level element is an object with key "Tiver.Fowl.Drivers".
   * **Version** - required version of driver
   * **Platform** - required platform of driver
 
-### Sample config for ChromeDriver v142.0.7444.61
+### Sample config for ChromeDriver latest stable
 
 ```json
 {
@@ -64,7 +65,7 @@ Top-level element is an object with key "Tiver.Fowl.Drivers".
       {
         "Name": "chrome",
         "DownloaderType": "ChromeDriverDownloader",
-        "Version": "142.0.7444.61",
+        "Version": "LATEST_RELEASE_STABLE",
         "Platform": "win32"
       }
     ]
