@@ -1,5 +1,4 @@
-# tiver-fowl.Drivers ![.NET](https://img.shields.io/badge/.NET-6-blue)  [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/MrHant/tiver-fowl/master/LICENSE) [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FMrHant%2Ftiver-fowl.Drivers.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FMrHant%2Ftiver-fowl.Drivers?ref=badge_shield)
-
+# tiver-fowl.Drivers ![.NET](https://img.shields.io/badge/.NET-10-blue) 
 
 Download WebDriver drivers' binaries from official sources
 
@@ -7,28 +6,31 @@ Download WebDriver drivers' binaries from official sources
 
 | Branch | Package | CI  |
 | ------ | ------- | --- |
-| master (stable) | [![NuGet](https://img.shields.io/nuget/v/Tiver.Fowl.Drivers.svg)](https://www.nuget.org/packages/Tiver.Fowl.Drivers) | [![Build status](https://ci.appveyor.com/api/projects/status/s6xak6m2jc2mijnt/branch/master?svg=true)](https://ci.appveyor.com/project/MrHant/tiver-fowl-drivers/branch/master) |
-| develop | [![NuGet Pre Release](https://img.shields.io/nuget/vpre/Tiver.Fowl.Drivers.svg)](https://www.nuget.org/packages/Tiver.Fowl.Drivers/absoluteLatest) | [![Build status](https://ci.appveyor.com/api/projects/status/s6xak6m2jc2mijnt/branch/develop?svg=true)](https://ci.appveyor.com/project/MrHant/tiver-fowl-drivers/branch/develop) |
+| master (stable) | [![NuGet](https://img.shields.io/nuget/v/Tiver.Fowl.Drivers.svg)](https://www.nuget.org/packages/Tiver.Fowl.Drivers) | [![Test & Publish NuGet package](https://github.com/MrHant/tiver-fowl.Drivers/actions/workflows/dotnet.yml/badge.svg?branch=master)](https://github.com/MrHant/tiver-fowl.Drivers/actions/workflows/dotnet.yml) |
+| develop | [![NuGet Pre Release](https://img.shields.io/nuget/vpre/Tiver.Fowl.Drivers.svg)](https://www.nuget.org/packages/Tiver.Fowl.Drivers/absoluteLatest) | [![Test & Publish NuGet package](https://github.com/MrHant/tiver-fowl.Drivers/actions/workflows/dotnet.yml/badge.svg?branch=develop)](https://github.com/MrHant/tiver-fowl.Drivers/actions/workflows/dotnet.yml) |
 
 ## Installation
 * Add ```Tiver.Fowl.Drivers``` nuget package to solution
-* Add downloaders configuration to ```app.config``` file. Sample configuration can be found below
+* Add downloaders configuration to a ```Tiver_config.json``` file. Sample configuration can be found below
 * Add calls to execute downloaders. Sample usage can be found below
 
 ### .NET support
-* Package is targeting .NET 6 and .NET Standard 2.0
-* Tests executed on .NET 6, .NET Framework 4.8, .NET Framework 4.7.2, .NET Framework 4.6.2
+* Package is targeting .NET 10 and .NET Standard 2.0
+* Tests executed on .NET 10
 
 ## Downloaders
-* ChromeDriverDownloader - downloads binaries from http://chromedriver.storage.googleapis.com/
-  * ```LATEST_RELEASE``` version can be used to download latest driver version
-  * ```LATEST_RELEASE_XXX``` version can be used to download latest driver with version XXX
+* **ChromeDriverDownloader** - downloads binaries from the Chrome for Testing feeds (https://googlechromelabs.github.io/chrome-for-testing/).
+  * ```LATEST_RELEASE``` or ```LATEST_RELEASE_STABLE``` resolves to the latest stable Chrome for Testing build.
+  * ```LATEST_RELEASE_BETA```, ```LATEST_RELEASE_DEV```, ```LATEST_RELEASE_CANARY``` resolve to the latest build for that channel.
+  * ```LATEST_RELEASE_XXX``` resolves to the newest known-good build for milestone ```XXX```.
+  * *Note:* For chromedriver v114 or older - use *ChromeDriverOldDownloader*
+* **ChromeDriverOldDownloader** - downloader for older versions of chromedriver. Uses http://chromedriver.storage.googleapis.com/ and should only be used when you explicitly need a driver version <= v114.
 
 ## Sample usage
 ### Download chrome driver of specific version
 
 ```c#
-var result = new ChromeDriverDownloader().DownloadBinary("76.0.3809.25", "win32");
+var result = new ChromeDriverDownloader().DownloadBinary("142.0.7444.61", "win32");
 ```
 
 ### Download configured "chrome" driver
@@ -53,7 +55,7 @@ Top-level element is an object with key "Tiver.Fowl.Drivers".
   * **Version** - required version of driver
   * **Platform** - required platform of driver
 
-### Sample config for ChromeDriver v76.0.3809.25
+### Sample config for ChromeDriver latest stable
 
 ```json
 {
@@ -63,7 +65,7 @@ Top-level element is an object with key "Tiver.Fowl.Drivers".
       {
         "Name": "chrome",
         "DownloaderType": "ChromeDriverDownloader",
-        "Version": "76.0.3809.25",
+        "Version": "LATEST_RELEASE_STABLE",
         "Platform": "win32"
       }
     ]

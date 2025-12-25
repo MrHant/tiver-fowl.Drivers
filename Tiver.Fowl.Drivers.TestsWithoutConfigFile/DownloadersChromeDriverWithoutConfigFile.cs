@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using NUnit.Framework;
+using NUnit.Framework.Legacy;
 using Tiver.Fowl.Drivers.Configuration;
 using Tiver.Fowl.Drivers.DriverDownloaders;
 
@@ -12,17 +13,35 @@ namespace Tiver.Fowl.Drivers.TestsWithoutConfigFile
 
         private static string DriverFilepath => Path.Combine(Config.DownloadLocation, "chromedriver.exe");
 
+        private static string[] Platforms = { "win32" };
+        
+        private static string BinaryName(string platform)
+        {
+            return platform switch
+            {
+                "win32" => "chromedriver.exe",
+                _ => "chromedriver"
+            };
+        }
         private void DeleteDriverAndVersionFilesIfExist()
         {
-            if (File.Exists(DriverFilepath))
+            foreach (var platform in Platforms)
             {
-                File.Delete(DriverFilepath);
-            }
+                var versionFilepath = Path.Combine(Config.DownloadLocation, $"{BinaryName(platform)}.version");
+                if (File.Exists(versionFilepath))
+                {
+                    var fileList = File.ReadAllLines(versionFilepath)[2..];
+                    foreach (var file in fileList)
+                    {
+                        var filePath = Path.Combine(Config.DownloadLocation, file);
+                        if (File.Exists(filePath))
+                        {
+                            File.Delete(filePath);
+                        }
+                    }
 
-            var versionFilepath = Path.Combine(Config.DownloadLocation, "chromedriver.exe.version");
-            if (File.Exists(versionFilepath))
-            {
-                File.Delete(versionFilepath);
+                    File.Delete(versionFilepath);
+                }
             }
         }
 
@@ -34,19 +53,19 @@ namespace Tiver.Fowl.Drivers.TestsWithoutConfigFile
 
         
         [Test]
-        public void Download_v29()
+        public void Download_v142()
         {
             var downloader = new ChromeDriverDownloader();
-            const string versionNumber = "2.9";
+            const string versionNumber = "142.0.7444.61";
             var result = downloader.DownloadBinary(versionNumber, "win32");
-            Assert.IsTrue(result.Successful);
-            Assert.AreEqual(DownloaderAction.BinaryDownloaded, result.PerformedAction);
-            Assert.IsNull(result.ErrorMessage);
+            ClassicAssert.IsTrue(result.Successful);
+            ClassicAssert.AreEqual(DownloaderAction.BinaryDownloaded, result.PerformedAction);
+            ClassicAssert.IsNull(result.ErrorMessage);
             var exists = File.Exists(DriverFilepath);
-            Assert.IsTrue(exists);
+            ClassicAssert.IsTrue(exists);
             exists = downloader.Binary.CheckBinaryExists();
-            Assert.IsTrue(exists);
-            Assert.AreEqual(versionNumber, downloader.Binary.GetExistingBinaryVersion());
+            ClassicAssert.IsTrue(exists);
+            ClassicAssert.AreEqual(versionNumber, downloader.Binary.GetExistingBinaryVersion());
         }
     }
 }
