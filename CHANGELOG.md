@@ -3,7 +3,7 @@
 ## [Unreleased]
 - xxx
 
-## [0.6.0-alpha]
+## [0.7.0]
 - Added: New Chrome downloader (Fixes #6).
 - Changed: Target framework updated to .NET 10; dependency bumps.
 - Added: Dev container for development.
