@@ -1,10 +1,11 @@
 # Changelog
 
 ## [Unreleased]
-- Added: New Chrome downloader (Fixes #6).
-- Changed: Target framework updated to .NET 9; dependency bumps.
+- xxx
 
-## [0.6.0-alpha] - 2025-11-08
+## [0.6.0-alpha]
+- Added: New Chrome downloader (Fixes #6).
+- Changed: Target framework updated to .NET 10; dependency bumps.
 - Added: Dev container for development.
 - Changed: Switched from Nuke to `dotnet` CLI for builds.
 - Changed: Updated .NET SDK version.
